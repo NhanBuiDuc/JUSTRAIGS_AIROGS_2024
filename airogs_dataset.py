@@ -46,7 +46,8 @@ class Airogs(torchvision.datasets.VisionDataset):
                     self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
-                image = Image.open(image_path)
+                image = Image.open(image_path).convert(
+                    'RGB')  # Adjust as needed
             except FileNotFoundError:
                 try:
                     # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -78,7 +79,8 @@ class Airogs(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
-                                image = Image.open(image_path)
+                                image = Image.open(image_path).convert(
+                                    'RGB')  # Adjust as needed
                             except FileNotFoundError:
                                 # Handle the case where both .jpg and .png files are not found
                                 print(
