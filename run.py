@@ -32,7 +32,7 @@ def main():
     num_workers = 16
 
     data_dir = "AIROGS_2024"
-    images_dir_name = "train"
+    images_dir_name = "images"
     output_dir = "output"
     run_test = True
     pretrained = True
@@ -135,7 +135,7 @@ def main():
         model = resnet18(pretrained=pretrained)
         model.fc = nn.Linear(
             in_features=model.fc.in_features, out_features=2, bias=True)
-    model = timm.create_model('efficientnet_b0',num_classes=2)
+    model = timm.create_model('efficientnet_b0', num_classes=2)
     model = model.to(device)
 
     wandb.watch(model)
