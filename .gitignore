@@ -10,11 +10,11 @@ output/
 wandb/*
 ./AIROGS_2024/*
 ./AIROGS_2024/images/*
-data/AIROGS_2024/images/*
-data/AIROGS_2024/preprocessed_images/*
-data/AIROGS_2024/color_aug_images/*
-data/AIROGS_2024/geo_aug_images/*
+AIROGS_2024/images/*
+AIROGS_2024/preprocessed_images/*
+/AIROGS_2024/color_aug_images/*
+/AIROGS_2024/geo_aug_images/*
 trainers/__pycache__/trainer.cpython-311.pyc
-datasets/__pycache__/AIROGS_dataset.cpython-311.pyc
-data/AIROGS_2024/fold_split_images/*
+sets/__pycache__/AIROGS_dataset.cpython-311.pyc
+AIROGS_2024/fold_split_images/*
 logs/*
