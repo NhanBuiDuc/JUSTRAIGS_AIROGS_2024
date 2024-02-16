@@ -80,6 +80,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                                 print(
                                     f"Error: File not found for index {index}")
                                 # You might want to return a placeholder image or raise an exception as needed
+        image = Image.open(image_path)
 
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
