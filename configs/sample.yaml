@@ -1,0 +1,22 @@
+exp_id: 12345
+fold_num: 4
+resize: 256
+epochs: 50
+batch_size: 64
+num_workers: 64
+data_dir: AIROGS_2024
+images_dir_name: train
+run_test: False
+model_name: resnet18 # any model supported by timm (https://github.com/rwightman/pytorch-image-models/tree/master/timm/models)
+pretrained: True
+optimizer_name: Adam
+momentum: 0.1
+scheduler: null
+lr_step_period: 5
+lr: 1e-3
+patience: 5
+apply_augs: False
+apply_clahe: False
+dropout: 0.0
+apply_scaling: False
+polar_transform: False
