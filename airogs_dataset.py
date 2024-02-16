@@ -30,14 +30,14 @@ class Airogs(torchvision.datasets.VisionDataset):
 
     def __getitem__(self, index):
         file_name = self.df_files.loc[index, 'Eye ID']
-        path_mask = os.path.join(
-            self.path, self.images_dir_name, file_name + '.jpg')
+        image = None
         try:
             # Attempt to open the image with .jpg extension
             image_path = os.path.join(
                 self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
+            image = Image.open(image_path)
 
         except FileNotFoundError:
             try:
@@ -46,7 +46,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                     self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
-
+                image = Image.open(image_path)
             except FileNotFoundError:
                 try:
                     # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -54,6 +54,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                         self.path, self.images_dir_name, file_name + ".jpeg")
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
+                    image = Image.open(image_path)
                 except FileNotFoundError:
                     try:
                         # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -61,6 +62,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                             self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
+                        image = Image.open(image_path)
                     except FileNotFoundError:
                         try:
                             # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -68,6 +70,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                                 self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
+                            image = Image.open(image_path)
                         except FileNotFoundError:
                             try:
                                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -75,12 +78,12 @@ class Airogs(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
+                                image = Image.open(image_path)
                             except FileNotFoundError:
                                 # Handle the case where both .jpg and .png files are not found
                                 print(
                                     f"Error: File not found for index {index}")
                                 # You might want to return a placeholder image or raise an exception as needed
-        image = Image.open(image_path)
 
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
