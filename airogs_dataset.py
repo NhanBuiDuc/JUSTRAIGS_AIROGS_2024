@@ -35,7 +35,7 @@ class Airogs(torchvision.datasets.VisionDataset):
         try:
             # Attempt to open the image with .jpg extension
             image_path = os.path.join(
-                self.path, self.images_dir_name + ".jpg")
+                self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
 
@@ -43,7 +43,7 @@ class Airogs(torchvision.datasets.VisionDataset):
             try:
                 # If the file with .jpg extension is not found, try to open the image with .png extension
                 image_path = os.path.join(
-                    self.path, self.images_dir_name + ".png")
+                    self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
 
@@ -51,28 +51,28 @@ class Airogs(torchvision.datasets.VisionDataset):
                 try:
                     # If the file with .jpg extension is not found, try to open the image with .png extension
                     image_path = os.path.join(
-                        self.path, self.images_dir_name + ".jpeg")
+                        self.path, self.images_dir_name, file_name + ".jpeg")
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
                 except FileNotFoundError:
                     try:
                         # If the file with .jpg extension is not found, try to open the image with .png extension
                         image_path = os.path.join(
-                            self.path, self.images_dir_name + ".JPG")
+                            self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
                     except FileNotFoundError:
                         try:
                             # If the file with .jpg extension is not found, try to open the image with .png extension
                             image_path = os.path.join(
-                                self.path, self.images_dir_name + ".JPEG")
+                                self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
                         except FileNotFoundError:
                             try:
                                 # If the file with .jpg extension is not found, try to open the image with .png extension
                                 image_path = os.path.join(
-                                    self.path, self.images_dir_name + ".PNG")
+                                    self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
                             except FileNotFoundError:
