@@ -134,7 +134,8 @@ def main():
 
     pos_weight = round(train_nrg_index / train_rg_index)
 
-    pos_weight = torch.full([batch_size], pos_weight, dtype=torch.float32)
+    pos_weight = torch.full([batch_size], pos_weight,
+                            dtype=torch.float32, device=device)
     delimiter = ','
     datefmt = '%Y/%m/%d %H:%M:%S'
     filename = f"log/log.csv"
