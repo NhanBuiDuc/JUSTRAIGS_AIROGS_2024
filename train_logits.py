@@ -217,7 +217,7 @@ def main():
                         labels.append(target)
                         optimizer.zero_grad()
                         output = model(inp.to(device))
-                        output = output.squeeze(1).float()
+                        target = target.float()
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
                         predictions.append(output)
