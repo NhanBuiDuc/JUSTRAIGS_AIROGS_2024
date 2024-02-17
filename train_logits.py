@@ -295,7 +295,7 @@ def main():
 
         # Testing
         if run_test:
-            checkpoint = torch.load(os.path.join(output_dir, "airogs_3.pt"))
+            checkpoint = torch.load(os.path.join(output_dir, "best.pt"))
             model.load_state_dict(checkpoint['state_dict'])
             f.write("Best F1 {} from epoch {}\n".format(
                 checkpoint["best_f1"], checkpoint["epoch"]))
