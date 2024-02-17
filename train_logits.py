@@ -129,11 +129,11 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
     # Logger Init
-    train_nrg_index = (labels_referable == 'NRG')
-    train_rg_index = (labels_referable == 'RG')
+    train_nrg_index = (labels_referable == 'NRG').sum()
+    train_rg_index = (labels_referable == 'RG').sum()
     nrg_count = len(train_nrg_index)
     rg_count = len(train_rg_index)
-    pos_weight = math.round(nrg_count / rg_count)
+    pos_weight = round(nrg_count / rg_count)
 
     pos_weight = torch.full([batch_size], pos_weight)
     delimiter = ','
