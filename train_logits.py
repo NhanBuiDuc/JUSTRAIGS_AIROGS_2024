@@ -28,7 +28,7 @@ from datetime import datetime
 
 def main():
     resize = 224
-    epochs = -1
+    epochs = 50
     lr = 0.01
     lr_step_period = None
     momentum = 0.1
@@ -40,7 +40,7 @@ def main():
     output_dir = "output"
     run_test = True
     pretrained = True
-    model_name = "resnet18"
+    model_name = "efficientnet_b0"
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
 
@@ -139,7 +139,7 @@ def main():
     max_size = 1024  # 1 kilobyte
     max_files = 4  # 4 rotating files
     header = ['date', 'level', 'epoch', 'lr', 'conf_mat', 'acc', 'recall',
-              'precision', 'f1', 'auc', 'sensitivity', 'thresh_hold']
+              'precision', 'f1', 'auc', 'sensitivity', 'thresh_hold', 'optimizer']
 
     # Creat logger with csv rotating handler
     csvlogger = CsvLogger(filename=filename,
@@ -260,12 +260,12 @@ def main():
                         # wandb.log({"epoch": epoch, "train loss": avrg_loss,
                         #           "train acc": accuracy, "train f1": _f1_score, "train auc": auc})
                         csvlogger.train(
-                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold])
+                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name])
                     else:
                         # wandb.log({"epoch": epoch, "val loss": avrg_loss,
                         #           "val acc": accuracy, "val f1": _f1_score, "val auc": auc})
                         csvlogger.val(
-                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold])
+                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name])
                 scheduler.step()
 
                 # save model
