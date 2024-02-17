@@ -129,10 +129,8 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
     # Logger Init
-    train_nrg_index = labels_referable.index[
-        labels_referable[1] == 'NRG']
-    train_rg_index = labels_referable.index[
-        labels_referable[1] == 'RG']
+    train_nrg_index = labels_referable[1] == 'NRG'
+    train_rg_index = labels_referable[1] == 'RG'
     nrg_count = len(train_nrg_index)
     rg_count = len(train_rg_index)
     pos_weight = math.round(nrg_count / rg_count)
