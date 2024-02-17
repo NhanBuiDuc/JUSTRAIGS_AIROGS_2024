@@ -132,7 +132,7 @@ def main():
 
     delimiter = ','
     datefmt = '%Y/%m/%d %H:%M:%S'
-    current_time = datetime.now().strftime(datefmt)
+    current_time = datetime.now().strftime('%Y/%m/%d%H:%M:%S')
     filename = f"log/${current_time}"
     level = logging.INFO
     custom_additional_levels = ["train", "val"]
