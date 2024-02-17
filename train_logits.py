@@ -218,6 +218,7 @@ def main():
                         optimizer.zero_grad()
                         output = model(inp.to(device))
                         output = output.squeeze(1)
+                        output = output.to(dtype=torch.float32)
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
                         predictions.append(output)
