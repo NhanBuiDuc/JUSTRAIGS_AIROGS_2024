@@ -24,7 +24,7 @@ import wandb
 
 def main():
     resize = 224
-    epochs = -1
+    epochs = 50
     lr = 0.01
     lr_step_period = None
     momentum = 0.1
@@ -36,7 +36,7 @@ def main():
     output_dir = "output"
     run_test = True
     pretrained = True
-    model_name = "resnet18"
+    model_name = "efficientnet_b0"
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
 
