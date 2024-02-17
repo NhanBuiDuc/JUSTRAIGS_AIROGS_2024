@@ -130,9 +130,9 @@ def main():
     print("Class Weights: ", weight_referable)
     # Logger Init
     train_nrg_index = labels_referable.index[
-        labels_referable['Final Label'] == 'NRG']
+        labels_referable[1] == 'NRG']
     train_rg_index = labels_referable.index[
-        labels_referable['Final Label'] == 'RG']
+        labels_referable[1] == 'RG']
     nrg_count = len(train_nrg_index)
     rg_count = len(train_rg_index)
     pos_weight = math.round(nrg_count / rg_count)
@@ -182,7 +182,8 @@ def main():
 
     if optimizer_name == "sgd":
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
-
+    elif optimizer_name == "adam":
+        optimizer = optim.Adam(model.parameters(), lr=lr, momentum=momentum)
     if lr_step_period is None:
         lr_step_period = math.inf
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_step_period)
