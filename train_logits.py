@@ -4,7 +4,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
 from tqdm import tqdm
 from torchvision.models import resnet18
 from torch.utils.data import DataLoader
@@ -134,13 +134,15 @@ def main():
     if model_name == "resnet18":
         model = resnet18(pretrained=pretrained)
         model.fc = nn.Linear(
-            in_features=model.fc.in_features, out_features=2, bias=True)
-    model = timm.create_model('efficientnet_b0', num_classes=2)
+            in_features=model.fc.in_features, out_features=1, bias=True)
+    model = timm.create_model('efficientnet_b0', num_classes=1)
     model = model.to(device)
 
     wandb.watch(model)
 
-    criterion = CrossEntropyLoss(
+    # criterion = CrossEntropyLoss(
+    #     weight=torch.from_numpy(weight_referable).to(device))
+    criterion = BCEWithLogitsLoss(
         weight=torch.from_numpy(weight_referable).to(device))
 
     if optimizer_name == "sgd":
@@ -184,11 +186,12 @@ def main():
                     predictions = []
                     loader = train_loader if split == "Train" else val_loader
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
-                        labels += target
+                        labels.append(target)
                         optimizer.zero_grad()
                         output = model(inp.to(device))
-                        _, batch_prediction = torch.max(output, dim=1)
-                        predictions += batch_prediction.detach().tolist()
+                        # _, batch_prediction = torch.max(output, dim=1)
+                        # predictions += batch_prediction.detach().tolist()
+                        predictions.append(output.detach().tolist())
                         batch_loss = criterion(output, target.to(device))
                         epoch_total_loss += batch_loss.item()
 
@@ -197,6 +200,9 @@ def main():
                             optimizer.step()
 
                     avrg_loss = epoch_total_loss / loader.dataset.__len__()
+                    train_merged_logits = torch.cat(
+                        self.train_logits_list, dim=0)
+                    train_merged_gt = torch.cat(self.train_Y_list, dim=0)
                     accuracy = metrics.accuracy_score(labels, predictions)
                     confusion = metrics.confusion_matrix(labels, predictions)
                     _f1_score = f1_score(labels, predictions, average="macro")
@@ -243,7 +249,7 @@ def main():
 
         # Testing
         if run_test:
-            checkpoint = torch.load(os.path.join(output_dir, "best.pt"))
+            checkpoint = torch.load(os.path.join(output_dir, "airogs_3.pt"))
             model.load_state_dict(checkpoint['state_dict'])
             f.write("Best F1 {} from epoch {}\n".format(
                 checkpoint["best_f1"], checkpoint["epoch"]))
