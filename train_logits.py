@@ -20,6 +20,10 @@ from PIL import Image
 import timm
 from airogs_dataset import Airogs
 import wandb
+from sklearn.metrics import roc_curve, roc_auc_score, auc
+from csv_logger import CsvLogger
+import logging
+from datetime import datetime
 
 
 def main():
@@ -66,7 +70,7 @@ def main():
         "device": device.type,
         "resize": resize
     })
-
+    desired_specificity = 0.95
     transform = None
     polar_transform = None
 
@@ -124,6 +128,31 @@ def main():
     weight_referable = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
+    # Logger Init
+
+    delimiter = ','
+    datefmt = '%Y/%m/%d %H:%M:%S'
+    current_time = datetime.now().strftime(datefmt)
+    filename = f"log/${current_time}"
+    level = logging.INFO
+    custom_additional_levels = ["train", "val"]
+    fmt = f'%(asctime)s{delimiter}%(levelname)s{delimiter}%(message)s'
+    max_size = 1024  # 1 kilobyte
+    max_files = 4  # 4 rotating files
+    header = ['date', 'level', 'epoch', 'lr', 'conf_mat', 'acc', 'recall',
+              'precision', 'f1', 'auc', 'sensitivity', 'thresh_hold']
+
+    # Creat logger with csv rotating handler
+    csvlogger = CsvLogger(filename=filename,
+                          delimiter=delimiter,
+                          level=level,
+                          add_level_names=custom_additional_levels,
+                          add_level_nums=None,
+                          fmt=fmt,
+                          datefmt=datefmt,
+                          max_size=max_size,
+                          max_files=max_files,
+                          header=header)
 
     wandb.config.update({
         "train_count": len(train_dataset),
@@ -191,7 +220,7 @@ def main():
                         output = model(inp.to(device))
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
-                        predictions.append(output.detach().tolist())
+                        predictions.append(output)
                         batch_loss = criterion(output, target.to(device))
                         epoch_total_loss += batch_loss.item()
 
@@ -200,11 +229,26 @@ def main():
                             optimizer.step()
 
                     avrg_loss = epoch_total_loss / loader.dataset.__len__()
-                    train_merged_logits = torch.cat(
-                        self.train_logits_list, dim=0)
-                    train_merged_gt = torch.cat(self.train_Y_list, dim=0)
+                    predictions = torch.cat(
+                        predictions, dim=0)
+                    labels = torch.cat(labels, dim=0)
+                    logits = predictions.detach().cpu().numpy()
+                    labels = labels.detach().cpu().numpy()
+                    # Compute the ROC curve
+                    fpr, tpr, thresholds = roc_curve(
+                        labels, logits)
+                    # Get the corresponding threshold
+                    threshold_idx = np.argmax(
+                        fpr >= (1 - desired_specificity))
+                    threshold = thresholds[threshold_idx]
+                    # Get the corresponding TPR (sensitivity)
+                    sensitivity = tpr[threshold_idx]
+                    predictions = (
+                        logits >= threshold).astype(int)
                     accuracy = metrics.accuracy_score(labels, predictions)
                     confusion = metrics.confusion_matrix(labels, predictions)
+                    recall = metrics.recall_score(labels, predictions)
+                    precision = metrics.precision_score(labels, predictions)
                     _f1_score = f1_score(labels, predictions, average="macro")
                     auc = sklearn.metrics.roc_auc_score(labels, predictions)
                     print("%s Epoch %d - loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f" %
@@ -214,12 +258,15 @@ def main():
                     f.flush()
 
                     if split == "Train":
-                        wandb.log({"epoch": epoch, "train loss": avrg_loss,
-                                  "train acc": accuracy, "train f1": _f1_score, "train auc": auc})
+                        # wandb.log({"epoch": epoch, "train loss": avrg_loss,
+                        #           "train acc": accuracy, "train f1": _f1_score, "train auc": auc})
+                        csvlogger.train(
+                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold])
                     else:
-                        wandb.log({"epoch": epoch, "val loss": avrg_loss,
-                                  "val acc": accuracy, "val f1": _f1_score, "val auc": auc})
-
+                        # wandb.log({"epoch": epoch, "val loss": avrg_loss,
+                        #           "val acc": accuracy, "val f1": _f1_score, "val auc": auc})
+                        csvlogger.val(
+                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold])
                 scheduler.step()
 
                 # save model
