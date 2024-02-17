@@ -219,11 +219,14 @@ def main():
                         output = model(inp.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
-                        target = target.float()
+                        target = target.float().to(device)
+                        output = output.view(1, 0)
+                        target = target.view(1, 0)
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
                         predictions.append(output)
-                        batch_loss = criterion(output, target.to(device))
+                        labels.append(target)
+                        batch_loss = criterion(output, target)
                         epoch_total_loss += batch_loss.item()
 
                         if split == "Train":
