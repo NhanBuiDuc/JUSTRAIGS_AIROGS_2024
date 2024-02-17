@@ -129,7 +129,15 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
     # Logger Init
+    train_nrg_index = labels_referable.index[
+        labels_referable['Final Label'] == 'NRG']
+    train_rg_index = labels_referable.index[
+        labels_referable['Final Label'] == 'RG']
+    nrg_count = len(train_nrg_index)
+    rg_count = len(train_rg_index)
+    pos_weight = math.round(nrg_count / rg_count)
 
+    pos_weight = torch.full([batch_size], pos_weight)
     delimiter = ','
     datefmt = '%Y/%m/%d %H:%M:%S'
     filename = f"log/log.csv"
@@ -170,7 +178,7 @@ def main():
 
     # criterion = CrossEntropyLoss(
     #     weight=torch.from_numpy(weight_referable).to(device))
-    criterion = BCEWithLogitsLoss()
+    criterion = BCEWithLogitsLoss(pos_weight=pos_weight)
 
     if optimizer_name == "sgd":
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
