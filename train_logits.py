@@ -132,8 +132,7 @@ def main():
 
     delimiter = ','
     datefmt = '%Y/%m/%d %H:%M:%S'
-    current_time = datetime.now().strftime('%Y/%m/%d/%H:%M:%S')
-    filename = f"log/${current_time}"
+    filename = f"log/log.csv"
     level = logging.INFO
     custom_additional_levels = ["train", "val"]
     fmt = f'%(asctime)s{delimiter}%(levelname)s{delimiter}%(message)s'
