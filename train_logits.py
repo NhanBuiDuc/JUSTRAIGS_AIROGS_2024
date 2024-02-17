@@ -170,8 +170,7 @@ def main():
 
     # criterion = CrossEntropyLoss(
     #     weight=torch.from_numpy(weight_referable).to(device))
-    criterion = BCEWithLogitsLoss(
-        weight=torch.from_numpy(weight_referable).to(device))
+    criterion = BCEWithLogitsLoss()
 
     if optimizer_name == "sgd":
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
