@@ -229,8 +229,8 @@ def main():
                         target = target.view(target.shape[0], target.shape[1])
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
-                        predictions.append(output)
-                        labels.append(target)
+                        predictions.append(output.detach().cpu().numpy())
+                        labels.append(target.detach().cpu().numpy())
                         batch_loss = criterion(output, target)
                         epoch_total_loss += batch_loss.item()
 
@@ -239,11 +239,9 @@ def main():
                             optimizer.step()
 
                     avrg_loss = epoch_total_loss / loader.dataset.__len__()
-                    predictions = torch.cat(
-                        predictions, dim=0)
-                    labels = torch.cat(labels, dim=0)
-                    logits = predictions.detach().cpu().numpy()
-                    labels = labels.detach().cpu().numpy()
+                    predictions = np.concatenate(
+                        predictions, axis=0)
+                    labels = np.concatenate(labels, axis=0)
                     # Compute the ROC curve
                     fpr, tpr, thresholds = roc_curve(
                         labels, logits)
