@@ -23,7 +23,6 @@ class Airogs(torchvision.datasets.VisionDataset):
         # columns = ['challenge_id', 'class', 'referable', 'gradable']
         self.df_files = pd.read_csv(
             os.path.join(self.path, self.split + ".csv"))
-        self.df_files = self.df_files[:100]
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
