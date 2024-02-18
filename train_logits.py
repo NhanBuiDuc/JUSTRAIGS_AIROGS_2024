@@ -144,8 +144,8 @@ def main():
     fmt = f'%(asctime)s{delimiter}%(levelname)s{delimiter}%(message)s'
     max_size = 1024  # 1 kilobyte
     max_files = 4  # 4 rotating files
-    header = ['date', 'level', 'epoch', 'lr', 'conf_mat', 'acc', 'recall',
-              'precision', 'f1', 'auc', 'sensitivity', 'thresh_hold', 'optimizer']
+    header = ['date', 'level', 'epoch', 'lr', 'acc', 'recall',
+              'precision', 'f1', 'auc', 'sensitivity', 'thresh_hold', 'optimizer', 'conf_mat']
 
     # Creat logger with csv rotating handler
     csvlogger = CsvLogger(filename=filename,
@@ -259,8 +259,8 @@ def main():
                     precision = metrics.precision_score(labels, predictions)
                     _f1_score = f1_score(labels, predictions, average="macro")
                     auc = sklearn.metrics.roc_auc_score(labels, predictions)
-                    print("%s Epoch %d - loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f" %
-                          (split, epoch, avrg_loss, auc, _f1_score, accuracy))
+                    print("%s Epoch %d - loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f Recall=%0.4f Precision=%0.4f Sensitivity=%0.4f %0.4f" %
+                          (split, epoch, avrg_loss, auc, _f1_score, accuracy, recall, precision, sensitivity, confusion))
                     f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
                         split, epoch, avrg_loss, auc, _f1_score, accuracy))
                     f.flush()
@@ -269,12 +269,12 @@ def main():
                         # wandb.log({"epoch": epoch, "train loss": avrg_loss,
                         #           "train acc": accuracy, "train f1": _f1_score, "train auc": auc})
                         csvlogger.train(
-                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name])
+                            [epoch, lr, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name, confusion])
                     else:
                         # wandb.log({"epoch": epoch, "val loss": avrg_loss,
                         #           "val acc": accuracy, "val f1": _f1_score, "val auc": auc})
                         csvlogger.val(
-                            [epoch, lr, confusion, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name])
+                            [epoch, lr, accuracy, recall, precision, _f1_score, sensitivity, threshold, optimizer_name, confusion])
                 scheduler.step()
 
                 # save model
