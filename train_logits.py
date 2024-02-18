@@ -220,7 +220,6 @@ def main():
                     predictions = []
                     loader = train_loader if split == "Train" else val_loader
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
-                        labels.append(target)
                         optimizer.zero_grad()
                         output = model(inp.to(device))
                         # output = output.squeeze(1)
