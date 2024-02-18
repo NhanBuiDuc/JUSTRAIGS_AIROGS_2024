@@ -106,18 +106,18 @@ def main():
         transforms=transform
     )
 
-    train_loader = DataLoader(train_dataset[:100],
+    train_loader = DataLoader(train_dataset,
                               batch_size=batch_size,
                               shuffle=True,
                               num_workers=num_workers,
                               )
-    val_loader = DataLoader(val_dataset[:100],
+    val_loader = DataLoader(val_dataset,
                             batch_size=batch_size,
                             shuffle=True,
                             num_workers=num_workers,
                             )
 
-    test_loader = DataLoader(test_dataset[:100],
+    test_loader = DataLoader(test_dataset,
                              batch_size=batch_size,
                              shuffle=False,
                              num_workers=num_workers,
