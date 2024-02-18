@@ -259,8 +259,9 @@ def main():
                     precision = metrics.precision_score(labels, predictions)
                     _f1_score = f1_score(labels, predictions, average="macro")
                     auc = sklearn.metrics.roc_auc_score(labels, predictions)
-                    print("%s Epoch %d - loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f Recall=%0.4f Precision=%0.4f Sensitivity=%0.4f %0.4f" %
-                          (split, epoch, avrg_loss, auc, _f1_score, accuracy, recall, precision, sensitivity, confusion))
+                    print("%s Epoch %d - loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f Recall=%0.4f Precision=%0.4f Sensitivity=%0.4f" %
+                          (split, epoch, avrg_loss, auc, _f1_score, accuracy, recall, precision, sensitivity))
+                    print(confusion)
                     f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
                         split, epoch, avrg_loss, auc, _f1_score, accuracy))
                     f.flush()
