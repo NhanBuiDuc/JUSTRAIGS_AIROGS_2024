@@ -106,18 +106,18 @@ def main():
         transforms=transform
     )
 
-    train_loader = DataLoader(train_dataset,
+    train_loader = DataLoader(train_dataset[:100],
                               batch_size=batch_size,
                               shuffle=True,
                               num_workers=num_workers,
                               )
-    val_loader = DataLoader(val_dataset,
+    val_loader = DataLoader(val_dataset[:100],
                             batch_size=batch_size,
                             shuffle=True,
                             num_workers=num_workers,
                             )
 
-    test_loader = DataLoader(test_dataset,
+    test_loader = DataLoader(test_dataset[:100],
                              batch_size=batch_size,
                              shuffle=False,
                              num_workers=num_workers,
@@ -217,7 +217,7 @@ def main():
 
                     epoch_total_loss = 0
                     labels = []
-                    predictions = []
+                    logits = []
                     loader = train_loader if split == "Train" else val_loader
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
@@ -229,7 +229,7 @@ def main():
                         target = target.view(target.shape[0], target.shape[1])
                         # _, batch_prediction = torch.max(output, dim=1)
                         # predictions += batch_prediction.detach().tolist()
-                        predictions.append(output.detach().cpu().numpy())
+                        logits.append(output.detach().cpu().numpy())
                         labels.append(target.detach().cpu().numpy())
                         batch_loss = criterion(output, target)
                         epoch_total_loss += batch_loss.item()
@@ -239,8 +239,8 @@ def main():
                             optimizer.step()
 
                     avrg_loss = epoch_total_loss / loader.dataset.__len__()
-                    predictions = np.concatenate(
-                        predictions, axis=0)
+                    logits = np.concatenate(
+                        logits, axis=0)
                     labels = np.concatenate(labels, axis=0)
                     # Compute the ROC curve
                     fpr, tpr, thresholds = roc_curve(
