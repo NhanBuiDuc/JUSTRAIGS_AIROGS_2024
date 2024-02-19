@@ -3,7 +3,6 @@ import skimage
 from torchvision.ops import masks_to_boxes
 from torchvision.utils import draw_bounding_boxes
 import matplotlib.pyplot as plt
-from keras.preprocessing.image import img_to_array
 import tensorflow as tf
 import torchvision.transforms as transf
 import torch
