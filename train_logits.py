@@ -47,7 +47,7 @@ def main():
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
 
-    wandb.init(name=name, project="airogs_final", entity="airogs")
+    # wandb.init(name=name, project="airogs_final", entity="airogs")
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -56,23 +56,23 @@ def main():
     else:
         device = torch.device("cpu")
 
-    wandb.config.update({
-        "epochs": epochs,
-        "lr": lr,
-        "lr_step_period": lr_step_period,
-        "momentun": momentum,
-        "batch_size": batch_size,
-        "num_workers": num_workers,
-        "data_dir": data_dir,
-        "images_dir_name": images_dir_name,
-        "output_dir": output_dir,
-        "run_test": run_test,
-        "pretrained": pretrained,
-        "model": model_name,
-        "optimizer": optimizer_name,
-        "device": device.type,
-        "resize": resize
-    })
+    # wandb.config.update({
+    #     "epochs": epochs,
+    #     "lr": lr,
+    #     "lr_step_period": lr_step_period,
+    #     "momentun": momentum,
+    #     "batch_size": batch_size,
+    #     "num_workers": num_workers,
+    #     "data_dir": data_dir,
+    #     "images_dir_name": images_dir_name,
+    #     "output_dir": output_dir,
+    #     "run_test": run_test,
+    #     "pretrained": pretrained,
+    #     "model": model_name,
+    #     "optimizer": optimizer_name,
+    #     "device": device.type,
+    #     "resize": resize
+    # })
     desired_specificity = 0.95
     transform = None
     polar_transform = None
@@ -162,11 +162,11 @@ def main():
                           max_files=max_files,
                           header=header)
 
-    wandb.config.update({
-        "train_count": len(train_dataset),
-        "val_count": len(val_dataset),
-        "class_weights": ", ".join(map(lambda x: str(x), weight_referable))
-    })
+    # wandb.config.update({
+    #     "train_count": len(train_dataset),
+    #     "val_count": len(val_dataset),
+    #     "class_weights": ", ".join(map(lambda x: str(x), weight_referable))
+    # })
 
     if model_name == "resnet18":
         model = resnet18(pretrained=pretrained)
@@ -175,7 +175,7 @@ def main():
     model = timm.create_model('efficientnet_b0', num_classes=1)
     model = model.to(device)
 
-    wandb.watch(model)
+    # wandb.watch(model)
 
     # criterion = CrossEntropyLoss(
     #     weight=torch.from_numpy(weight_referable).to(device))
