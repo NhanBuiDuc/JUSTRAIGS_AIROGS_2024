@@ -1,3 +1,5 @@
+import tensorflow.compat.v1 as tf
+import tensorflow as tf
 import os
 import math
 import torch
@@ -23,7 +25,8 @@ import wandb
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
-from datetime import datetime
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
 def main():
