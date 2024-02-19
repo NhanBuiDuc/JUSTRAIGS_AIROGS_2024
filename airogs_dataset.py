@@ -23,6 +23,87 @@ from skimage.exposure import equalize_adapthist
 from skimage.transform import warp_polar
 
 
+def get_unet_light(img_rows=256, img_cols=256):
+    inputs = Input((3, img_rows, img_cols))
+    conv1 = Conv2D(32, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(inputs)
+    conv1 = Dropout(0.3)(conv1)
+    conv1 = Conv2D(32, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv1)
+    pool1 = MaxPooling2D(pool_size=(
+        2, 2), data_format='channels_first')(conv1)
+
+    conv2 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(pool1)
+    conv2 = Dropout(0.3)(conv2)
+    conv2 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv2)
+    pool2 = MaxPooling2D(pool_size=(
+        2, 2), data_format='channels_first')(conv2)
+
+    conv3 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(pool2)
+    conv3 = Dropout(0.3)(conv3)
+    conv3 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv3)
+    pool3 = MaxPooling2D(pool_size=(
+        2, 2), data_format='channels_first')(conv3)
+
+    conv4 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(pool3)
+    conv4 = Dropout(0.3)(conv4)
+    conv4 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv4)
+    pool4 = MaxPooling2D(pool_size=(
+        2, 2), data_format='channels_first')(conv4)
+
+    conv5 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(pool4)
+    conv5 = Dropout(0.3)(conv5)
+    conv5 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv5)
+
+    up6 = Concatenate(axis=1)(
+        [UpSampling2D(size=(2, 2), data_format='channels_first')(conv5), conv4])
+    conv6 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(up6)
+    conv6 = Dropout(0.3)(conv6)
+    conv6 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv6)
+
+    up7 = Concatenate(axis=1)(
+        [UpSampling2D(size=(2, 2), data_format='channels_first')(conv6), conv3])
+    conv7 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(up7)
+    conv7 = Dropout(0.3)(conv7)
+    conv7 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv7)
+
+    up8 = Concatenate(axis=1)(
+        [UpSampling2D(size=(2, 2), data_format='channels_first')(conv7), conv2])
+    conv8 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(up8)
+    conv8 = Dropout(0.3)(conv8)
+    conv8 = Conv2D(64, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv8)
+
+    up9 = Concatenate(axis=1)(
+        [UpSampling2D(size=(2, 2), data_format='channels_first')(conv8), conv1])
+    conv9 = Conv2D(32, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(up9)
+    conv9 = Dropout(0.3)(conv9)
+    conv9 = Conv2D(32, kernel_size=3, activation='relu',
+                   padding='same', data_format='channels_first')(conv9)
+
+    conv10 = Conv2D(1, kernel_size=1, activation='sigmoid',
+                    padding='same', data_format='channels_first')(conv9)
+    # conv10 = Flatten()(conv10)
+
+    model = Model(inputs=inputs, outputs=conv10)
+
+    return model
+
+
 def polar(image):
     return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
 
@@ -39,6 +120,9 @@ class Airogs(torchvision.datasets.VisionDataset):
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
+        self.crop_model = get_unet_light(img_rows=256, img_cols=256)
+        self.crop_model .summary()
+        self.crop_model .load_weights('last_checkpoint.hdf5')
         print("{} size: {}".format(split, len(self.df_files)))
 
     def __getitem__(self, index):
@@ -128,86 +212,6 @@ class Airogs(torchvision.datasets.VisionDataset):
         def th_to_tf_encoding(X):
             return np.rollaxis(X, 1, 4)
 
-        def get_unet_light(img_rows=256, img_cols=256):
-            inputs = Input((3, img_rows, img_cols))
-            conv1 = Conv2D(32, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(inputs)
-            conv1 = Dropout(0.3)(conv1)
-            conv1 = Conv2D(32, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv1)
-            pool1 = MaxPooling2D(pool_size=(
-                2, 2), data_format='channels_first')(conv1)
-
-            conv2 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(pool1)
-            conv2 = Dropout(0.3)(conv2)
-            conv2 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv2)
-            pool2 = MaxPooling2D(pool_size=(
-                2, 2), data_format='channels_first')(conv2)
-
-            conv3 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(pool2)
-            conv3 = Dropout(0.3)(conv3)
-            conv3 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv3)
-            pool3 = MaxPooling2D(pool_size=(
-                2, 2), data_format='channels_first')(conv3)
-
-            conv4 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(pool3)
-            conv4 = Dropout(0.3)(conv4)
-            conv4 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv4)
-            pool4 = MaxPooling2D(pool_size=(
-                2, 2), data_format='channels_first')(conv4)
-
-            conv5 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(pool4)
-            conv5 = Dropout(0.3)(conv5)
-            conv5 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv5)
-
-            up6 = Concatenate(axis=1)(
-                [UpSampling2D(size=(2, 2), data_format='channels_first')(conv5), conv4])
-            conv6 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(up6)
-            conv6 = Dropout(0.3)(conv6)
-            conv6 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv6)
-
-            up7 = Concatenate(axis=1)(
-                [UpSampling2D(size=(2, 2), data_format='channels_first')(conv6), conv3])
-            conv7 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(up7)
-            conv7 = Dropout(0.3)(conv7)
-            conv7 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv7)
-
-            up8 = Concatenate(axis=1)(
-                [UpSampling2D(size=(2, 2), data_format='channels_first')(conv7), conv2])
-            conv8 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(up8)
-            conv8 = Dropout(0.3)(conv8)
-            conv8 = Conv2D(64, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv8)
-
-            up9 = Concatenate(axis=1)(
-                [UpSampling2D(size=(2, 2), data_format='channels_first')(conv8), conv1])
-            conv9 = Conv2D(32, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(up9)
-            conv9 = Dropout(0.3)(conv9)
-            conv9 = Conv2D(32, kernel_size=3, activation='relu',
-                           padding='same', data_format='channels_first')(conv9)
-
-            conv10 = Conv2D(1, kernel_size=1, activation='sigmoid',
-                            padding='same', data_format='channels_first')(conv9)
-            # conv10 = Flatten()(conv10)
-
-            model = Model(inputs=inputs, outputs=conv10)
-
-            return model
-
         with tf.device('/GPU:0'):
             im = np.array(image)
             # im = plt.imread(img_path)
@@ -221,11 +225,7 @@ class Airogs(torchvision.datasets.VisionDataset):
             im = np.expand_dims(im, axis=0)
             im = tf_to_th_encoding(im)
 
-            model = get_unet_light(img_rows=256, img_cols=256)
-            model.summary()
-            model.load_weights('last_checkpoint.hdf5')
-
-            OwnPred = (model.predict(im)[0, 0]).astype(np.float64)
+            OwnPred = (self.crop_model.predict(im)[0, 0]).astype(np.float64)
             mask = torch.Tensor(OwnPred)
             mask[mask > 0.35] = 1.0
             mask[mask <= 0.35] = 0.0

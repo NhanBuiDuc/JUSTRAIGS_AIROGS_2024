@@ -10,6 +10,7 @@ output/
 wandb/*
 ./AIROGS_2024/*
 ./AIROGS_2024/images/*
+./AIROGS_2024/train/*
 AIROGS_2024/images/*
 AIROGS_2024/preprocessed_images/*
 /AIROGS_2024/color_aug_images/*
