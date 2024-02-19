@@ -219,9 +219,9 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
+                    for batch_num, (inp, cropped_img, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
-                        output = model(inp.to(device))
+                        output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
                         target = target.float().to(device)
