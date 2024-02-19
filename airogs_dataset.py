@@ -6,10 +6,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import torchvision.transforms as transf
 import torch
-from keras.layers import Dense, Dropout, Activation, Flatten, BatchNormalization, \
-    Conv2D, MaxPooling2D, ZeroPadding2D, Input, Embedding, \
-    Lambda, UpSampling2D, Cropping2D, Concatenate
-from keras.models import Sequential, Model
+from keras.layers import Dropout, Conv2D, MaxPooling2D, Input, UpSampling2D, Concatenate
+from keras.models import Model
 import torchvision
 import pandas as pd
 import glob
