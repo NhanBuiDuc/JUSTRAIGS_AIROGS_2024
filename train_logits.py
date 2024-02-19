@@ -37,7 +37,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
-def crop_optical_dics(self, image):
+def crop_optical_dics(image):
 
     def tf_to_th_encoding(X):
         return np.rollaxis(X, 3, 1)
