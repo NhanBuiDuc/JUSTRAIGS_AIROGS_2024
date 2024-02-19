@@ -1,4 +1,11 @@
 # import tensorflow.compat.v1 as tf
+from torchvision.utils import draw_bounding_boxes
+from torchvision.ops import masks_to_boxes
+from skimage.transform import warp_polar
+from skimage.exposure import equalize_adapthist
+import cv2
+from keras.models import Model
+from keras.layers import Dropout, Conv2D, MaxPooling2D, Input, UpSampling2D, Concatenate
 import tensorflow as tf
 import os
 import math
@@ -11,6 +18,7 @@ from tqdm import tqdm
 from torchvision.models import resnet18
 from torch.utils.data import DataLoader
 from skimage.io import imread
+import skimage
 import sklearn
 from sklearn import metrics
 from sklearn.metrics import f1_score
@@ -27,6 +35,69 @@ from csv_logger import CsvLogger
 import logging
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+
+def crop_optical_dics(self, image):
+
+    def tf_to_th_encoding(X):
+        return np.rollaxis(X, 3, 1)
+
+    def th_to_tf_encoding(X):
+        return np.rollaxis(X, 1, 4)
+
+    with tf.device('/GPU:0'):
+        im = np.array(image)
+        # im = plt.imread(img_path)
+        im = cv2.resize(im, (256, 256))
+        w, h, _ = im.shape
+        im = im.astype(np.float64) / 255.0
+        im = skimage.exposure.equalize_adapthist(im)
+        # plt.imshow(im), plt.show()
+
+        # Predicted Image
+        im = np.expand_dims(im, axis=0)
+        im = tf_to_th_encoding(im)
+
+        OwnPred = (self.crop_model.predict(im)[0, 0]).astype(np.float64)
+        mask = torch.Tensor(OwnPred)
+        mask[mask > 0.35] = 1.0
+        mask[mask <= 0.35] = 0.0
+
+        # We get the unique colors, as these would be the object ids.
+        obj_ids = torch.unique(mask)
+
+        # first id is the background, so remove it.
+        obj_ids = obj_ids[1:]
+
+        # split the color-encoded mask into a set of boolean masks.
+        # Note that this snippet would work as well if the masks were float values instead of ints.
+        masks = mask == obj_ids[:, None, None]
+
+        boxes = masks_to_boxes(masks)
+        print(boxes.shape)
+        print(boxes)
+
+        pad_x = (boxes[0][2] - boxes[0][0]) * 0.3
+        pad_y = (boxes[0][3] - boxes[0][1]) * 0.3
+
+        pad = max(pad_x, pad_y)
+        pad = max(pad, 20)
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((512, 512))
+        ])
+        x1 = max(0, boxes[0][0] - pad).to(torch.int64)
+        x2 = min(255, boxes[0][2] + pad).to(torch.int64)
+        y1 = max(0, boxes[0][1] - pad).to(torch.int64)
+        y2 = min(255, boxes[0][3] + pad).to(torch.int64)
+        im = im.transpose((0, 2, 3, 1))
+
+        fy = h/256
+        fx = w/256
+        # im = im.astype(np.float64) * 255.0
+        cropped_im = im[0, int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+        cropped_im = transform(cropped_im)
+        return cropped_im
 
 
 def main():
@@ -73,6 +144,89 @@ def main():
     #     "device": device.type,
     #     "resize": resize
     # })
+    def get_unet_light(img_rows=256, img_cols=256):
+        inputs = Input((3, img_rows, img_cols))
+        conv1 = Conv2D(32, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(inputs)
+        conv1 = Dropout(0.3)(conv1)
+        conv1 = Conv2D(32, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv1)
+        pool1 = MaxPooling2D(pool_size=(
+            2, 2), data_format='channels_first')(conv1)
+
+        conv2 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(pool1)
+        conv2 = Dropout(0.3)(conv2)
+        conv2 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv2)
+        pool2 = MaxPooling2D(pool_size=(
+            2, 2), data_format='channels_first')(conv2)
+
+        conv3 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(pool2)
+        conv3 = Dropout(0.3)(conv3)
+        conv3 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv3)
+        pool3 = MaxPooling2D(pool_size=(
+            2, 2), data_format='channels_first')(conv3)
+
+        conv4 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(pool3)
+        conv4 = Dropout(0.3)(conv4)
+        conv4 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv4)
+        pool4 = MaxPooling2D(pool_size=(
+            2, 2), data_format='channels_first')(conv4)
+
+        conv5 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(pool4)
+        conv5 = Dropout(0.3)(conv5)
+        conv5 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv5)
+
+        up6 = Concatenate(axis=1)(
+            [UpSampling2D(size=(2, 2), data_format='channels_first')(conv5), conv4])
+        conv6 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(up6)
+        conv6 = Dropout(0.3)(conv6)
+        conv6 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv6)
+
+        up7 = Concatenate(axis=1)(
+            [UpSampling2D(size=(2, 2), data_format='channels_first')(conv6), conv3])
+        conv7 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(up7)
+        conv7 = Dropout(0.3)(conv7)
+        conv7 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv7)
+
+        up8 = Concatenate(axis=1)(
+            [UpSampling2D(size=(2, 2), data_format='channels_first')(conv7), conv2])
+        conv8 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(up8)
+        conv8 = Dropout(0.3)(conv8)
+        conv8 = Conv2D(64, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv8)
+
+        up9 = Concatenate(axis=1)(
+            [UpSampling2D(size=(2, 2), data_format='channels_first')(conv8), conv1])
+        conv9 = Conv2D(32, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(up9)
+        conv9 = Dropout(0.3)(conv9)
+        conv9 = Conv2D(32, kernel_size=3, activation='relu',
+                       padding='same', data_format='channels_first')(conv9)
+
+        conv10 = Conv2D(1, kernel_size=1, activation='sigmoid',
+                        padding='same', data_format='channels_first')(conv9)
+        # conv10 = Flatten()(conv10)
+
+        model = Model(inputs=inputs, outputs=conv10)
+
+        return model
+
+    crop_model = get_unet_light(img_rows=256, img_cols=256)
+
+    crop_model.load_weights('last_checkpoint.hdf5')
     desired_specificity = 0.95
     transform = None
     polar_transform = None
@@ -222,8 +376,9 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, cropped_img, target) in enumerate(tqdm(loader)):
+                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
+                        cropped_img = crop_optical_dics(inp)
                         output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
