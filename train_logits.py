@@ -52,9 +52,9 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
             transforms.ToTensor(),
             transforms.Resize((512, 512))
         ])
-        transform_128 = transforms.Compose([
-            transforms.Resize((128, 128))
-        ])
+        # transform_128 = transforms.Compose([
+        #     transforms.Resize((128, 128))
+        # ])
         # image = transform(image)
         im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
@@ -63,7 +63,7 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
         for index, image in enumerate(im):
             w, h, c = image.shape
             image = np.expand_dims(image, axis=0)
-            image_128 = resize(image, (128, 128), anti_aliasing=True)
+            image_128 = resize(image, (3, 128, 128), anti_aliasing=True)
             image = np.transpose(image, (0, 3, 1, 2))
             image_128 = np.transpose(image_128, (0, 3, 1, 2))
             OwnPred = (crop_model1.predict(image)).astype(np.float64)
