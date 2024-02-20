@@ -84,10 +84,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
 
                 masks = mask == obj_ids[:, None, None]
                 box = masks_to_boxes(masks)
-                x1 = max(0, box[0][0] + 20)
-                x2 = min(255, box[0][2] + 20)
-                y1 = max(0, box[0][1] + 20)
-                y2 = min(255, box[0][3] + 20)
+                x1 = max(0, box[0][0] - 30)
+                x2 = min(255, box[0][2] + 30)
+                y1 = max(0, box[0][1] - 30)
+                y2 = min(255, box[0][3] + 30)
                 image = image.transpose((0, 2, 3, 1))
 
                 image = image[0]
@@ -142,10 +142,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         #     transforms.ToTensor(),
                         #     transforms.Resize((512, 512))
                         # ])
-                        x1 = max(0, box[0][0] + 20)
-                        x2 = min(255, box[0][2] + 20)
-                        y1 = max(0, box[0][1] + 20)
-                        y2 = min(255, box[0][3] + 20)
+                        x1 = max(0, box[0][0] - 30)
+                        x2 = min(255, box[0][2] + 30)
+                        y1 = max(0, box[0][1] - 30)
+                        y2 = min(255, box[0][3] + 30)
                         image = image.transpose((0, 2, 3, 1))
 
                         image = image[0]
@@ -203,10 +203,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                                 # y1 = max(0, box[0][1] - pad)
                                 # y2 = min(255, box[0][3] + pad)
 
-                                x1 = max(0, box[0][0] + 20)
-                                x2 = min(255, box[0][2] + 20)
-                                y1 = max(0, box[0][1] + 20)
-                                y2 = min(255, box[0][3] + 20)
+                                x1 = max(0, box[0][0] - 30)
+                                x2 = min(255, box[0][2] + 30)
+                                y1 = max(0, box[0][1] - 30)
+                                y2 = min(255, box[0][3] + 30)
                                 image_128 = image_128.transpose((0, 2, 3, 1))
 
                                 image_128 = image_128[0]
@@ -270,10 +270,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                                 # y1 = max(0, box[0][1] - pad)
                                 # y2 = min(255, box[0][3] + pad)
 
-                                x1 = max(0, box[0][0] + 20)
-                                x2 = min(255, box[0][2] + 20)
-                                y1 = max(0, box[0][1] + 20)
-                                y2 = min(255, box[0][3] + 20)
+                                x1 = max(0, box[0][0] - 30)
+                                x2 = min(255, box[0][2] + 30)
+                                y1 = max(0, box[0][1] - 30)
+                                y2 = min(255, box[0][3] + 30)
                                 image_128 = image_128.transpose((0, 2, 3, 1))
 
                                 image_128 = image_128[0]
