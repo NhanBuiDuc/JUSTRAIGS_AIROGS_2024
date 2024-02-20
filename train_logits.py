@@ -101,7 +101,8 @@ def crop_optical_dics(image, crop_model):
             fy = h/256
             fx = w/256
             # im = im.astype(np.float64) * 255.0
-            cropped_im = im[int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+            cropped_im = im[index][int(
+                y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
             cropped_im = transform(cropped_im)
             cropped_images.append(cropped_im)
         cropped_im = torch.cat([cropped_images], dim=0)
