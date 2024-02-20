@@ -47,14 +47,14 @@ def crop_optical_dics(image, crop_model):
         return np.rollaxis(X, 1, 4)
 
     with tf.device('/GPU:0'):
-        im = np.array(image)
-        # transform = transforms.Compose([
-        #     transforms.Resize((256, 256))
-        # ])
-        # image = transform(image)
-        # im = image.detach().cpu().numpy()
+
+        transform = transforms.Compose([
+            transforms.Resize((256, 256))
+        ])
+        image = transform(image)
+        im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
-        im = cv2.resize(im, (256, 256))
+        # im = cv2.resize(im, (256, 256))
         # _, _, w, h = im.shape
         w, h, _ = im.shape
         im = im.astype(np.float64) / 255.0
