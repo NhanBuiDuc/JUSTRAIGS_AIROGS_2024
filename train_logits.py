@@ -58,7 +58,7 @@ def crop_optical_dics(image, crop_model):
         # _, _, w, h = im.shape
         w, h, _ = im.shape
         im = im.astype(np.float64) / 255.0
-        im = skimage.exposure.equalize_adapthist(im)
+        # im = skimage.exposure.equalize_adapthist(im)
         im = tf_to_th_encoding(im)
 
         OwnPred = (crop_model.predict(im)[0, 0]).astype(np.float64)
