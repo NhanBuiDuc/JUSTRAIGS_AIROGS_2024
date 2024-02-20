@@ -55,8 +55,8 @@ def crop_optical_dics(image, crop_model):
         # im = plt.imread(img_path)
         # im = cv2.resize(im, (256, 256))
         _, _, w, h = im.shape
-        im = im.astype(np.float64) / 255.0
-        im = skimage.exposure.equalize_adapthist(im)
+        # im = im.astype(np.float64) / 255.0
+        # im = skimage.exposure.equalize_adapthist(im)
         # plt.imshow(im), plt.show()
 
         # Predicted Image
