@@ -60,7 +60,7 @@ def crop_optical_dics(image, crop_model):
         # plt.imshow(im), plt.show()
 
         # Predicted Image
-        im = np.expand_dims(im, axis=0)
+        # im = np.expand_dims(im, axis=0)
         im = tf_to_th_encoding(im)
 
         OwnPred = (crop_model.predict(im)[0, 0]).astype(np.float64)
