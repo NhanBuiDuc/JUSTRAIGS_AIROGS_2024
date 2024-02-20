@@ -312,7 +312,7 @@ def main():
     lr = 0.01
     lr_step_period = None
     momentum = 0.1
-    batch_size = 32
+    batch_size = 16
     num_workers = 16
 
     data_dir = "AIROGS_2024"
