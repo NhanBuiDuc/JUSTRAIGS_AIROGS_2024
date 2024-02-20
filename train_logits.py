@@ -50,6 +50,7 @@ def crop_optical_dics(image, crop_model):
         transform = transforms.Compose([
             transforms.Resize((256, 256))
         ])
+        image = transform(image)
         im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
         # im = plt.imread(img_path)
