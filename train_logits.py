@@ -76,8 +76,7 @@ def crop_optical_dics(image, crop_model):
         # split the color-encoded mask into a set of boolean masks.
         # Note that this snippet would work as well if the masks were float values instead of ints.
         masks = mask == obj_ids[:, None, None]
-        for mask in masks:
-            boxes = masks_to_boxes(masks)
+        boxes = masks_to_boxes(masks)
         print(boxes.shape)
         print(boxes)
 
