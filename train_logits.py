@@ -77,7 +77,7 @@ def crop_optical_dics(image, crop_model):
         # Note that this snippet would work as well if the masks were float values instead of ints.
         masks = mask == obj_ids[:, None, None]
         cropped_images = []
-        for mask in masks:
+        for index, mask in enumerate(masks):
             mask = mask.unsqueeze(0)
             box = masks_to_boxes(mask)
             print(box.shape)
