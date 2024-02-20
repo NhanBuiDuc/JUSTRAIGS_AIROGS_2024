@@ -301,6 +301,7 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                                 f"output_image_{index}.png")
                         except:
                             image = image.transpose((0, 2, 3, 1))
+                            image = image[0]
                             image = transform(image)
                             cropped_images.append(image)
         cropped_im = torch.stack(cropped_images, dim=0)
