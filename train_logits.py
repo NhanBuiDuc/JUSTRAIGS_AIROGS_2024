@@ -97,19 +97,19 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                 cropped_images.append(cropped_im)
                 cropped_im = cropped_im * 255
                 ###################################
-                # save_image = np.array(cropped_im)
-                # # save_image = save_image.transpose((1, 2, 0))
-                # # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
-                # # Ensure the values are in the range [0, 255]
-                # save_image = save_image.astype(np.uint8)
+                save_image = np.array(cropped_im)
+                # save_image = save_image.transpose((1, 2, 0))
+                # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                # Ensure the values are in the range [0, 255]
+                save_image = save_image.astype(np.uint8)
 
-                # # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
-                # if save_image.shape[0] == 3:
-                #     save_image = np.transpose(save_image, (1, 2, 0))
-                # save_image = Image.fromarray(save_image)
+                # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                if save_image.shape[0] == 3:
+                    save_image = np.transpose(save_image, (1, 2, 0))
+                save_image = Image.fromarray(save_image)
 
-                # # Save the image to a file (e.g., in PNG format)
-                # save_image.save(f"output_image_{index}.png")
+                # Save the image to a file (e.g., in PNG format)
+                save_image.save(f"output_image_{index}.png")
             except:
                 OwnPred = (crop_model2.predict(image)).astype(np.float64)
                 mask = torch.Tensor(OwnPred)
@@ -153,19 +153,19 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                     cropped_im = transform(cropped_im)
                     cropped_images.append(cropped_im)
                     ####################################
-                    # save_image = np.array(cropped_im)
-                    # # save_image = save_image.transpose((1, 2, 0))
-                    # # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
-                    # # Ensure the values are in the range [0, 255]
-                    # save_image = save_image.astype(np.uint8)
+                    save_image = np.array(cropped_im)
+                    # save_image = save_image.transpose((1, 2, 0))
+                    # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                    # Ensure the values are in the range [0, 255]
+                    save_image = save_image.astype(np.uint8)
 
-                    # # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
-                    # if save_image.shape[0] == 3:
-                    #     save_image = np.transpose(save_image, (1, 2, 0))
-                    # save_image = Image.fromarray(save_image)
+                    # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                    if save_image.shape[0] == 3:
+                        save_image = np.transpose(save_image, (1, 2, 0))
+                    save_image = Image.fromarray(save_image)
 
-                    # # Save the image to a file (e.g., in PNG format)
-                    # save_image.save(f"output_image_{index}.png")
+                    # Save the image to a file (e.g., in PNG format)
+                    save_image.save(f"output_image_{index}.png")
                 except:
                     OwnPred = (crop_model3.predict(image)).astype(np.float64)
                     mask = torch.Tensor(OwnPred)
@@ -211,19 +211,19 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         cropped_im = transform(cropped_im)
                         cropped_images.append(cropped_im)
                         ##################################
-                        # save_image = np.array(cropped_im)
-                        # # save_image = save_image.transpose((1, 2, 0))
-                        # # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
-                        # # Ensure the values are in the range [0, 255]
-                        # save_image = save_image.astype(np.uint8)
+                        save_image = np.array(cropped_im)
+                        # save_image = save_image.transpose((1, 2, 0))
+                        # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                        # Ensure the values are in the range [0, 255]
+                        save_image = save_image.astype(np.uint8)
 
-                        # # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
-                        # if save_image.shape[0] == 3:
-                        #     save_image = np.transpose(save_image, (1, 2, 0))
-                        # save_image = Image.fromarray(save_image)
+                        # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                        if save_image.shape[0] == 3:
+                            save_image = np.transpose(save_image, (1, 2, 0))
+                        save_image = Image.fromarray(save_image)
 
-                        # # Save the image to a file (e.g., in PNG format)
-                        # save_image.save(f"output_image_{index}.png")
+                        # Save the image to a file (e.g., in PNG format)
+                        save_image.save(f"output_image_{index}.png")
                     except:
                         OwnPred = (crop_model4.predict(
                             image)).astype(np.float64)
@@ -277,19 +277,19 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         cropped_im = transform(cropped_im)
                         cropped_images.append(cropped_im)
                         ###################################
-                        # save_image = np.array(cropped_im)
-                        # # save_image = save_image.transpose((1, 2, 0))
-                        # # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
-                        # # Ensure the values are in the range [0, 255]
-                        # save_image = save_image.astype(np.uint8)
+                        save_image = np.array(cropped_im)
+                        # save_image = save_image.transpose((1, 2, 0))
+                        # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                        # Ensure the values are in the range [0, 255]
+                        save_image = save_image.astype(np.uint8)
 
-                        # # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
-                        # if save_image.shape[0] == 3:
-                        #     save_image = np.transpose(save_image, (1, 2, 0))
-                        # save_image = Image.fromarray(save_image)
+                        # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                        if save_image.shape[0] == 3:
+                            save_image = np.transpose(save_image, (1, 2, 0))
+                        save_image = Image.fromarray(save_image)
 
-                        # # Save the image to a file (e.g., in PNG format)
-                        # save_image.save(f"output_image_{index}.png")
+                        # Save the image to a file (e.g., in PNG format)
+                        save_image.save(f"output_image_{index}.png")
         cropped_im = torch.stack(cropped_images, dim=0)
         return cropped_im
 
