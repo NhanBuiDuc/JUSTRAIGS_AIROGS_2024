@@ -51,9 +51,10 @@ def crop_optical_dics(image, crop_model):
             transforms.Resize((256, 256))
         ])
         im = image.detach().cpu().numpy()
+        im = np.transpose(im, (0, 2, 3, 1))
         # im = plt.imread(img_path)
         # im = cv2.resize(im, (256, 256))
-        w, h, _ = im.shape
+        _, _, w, h = im.shape
         im = im.astype(np.float64) / 255.0
         im = skimage.exposure.equalize_adapthist(im)
         # plt.imshow(im), plt.show()
