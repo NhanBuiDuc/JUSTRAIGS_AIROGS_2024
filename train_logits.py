@@ -46,16 +46,16 @@ def crop_optical_dics(image, crop_model):
         return np.rollaxis(X, 1, 4)
 
     with tf.device('/GPU:0'):
-        # im = np.array(image)
-        transform = transforms.Compose([
-            transforms.Resize((256, 256))
-        ])
-        image = transform(image)
-        im = image.detach().cpu().numpy()
+        im = np.array(image)
+        # transform = transforms.Compose([
+        #     transforms.Resize((256, 256))
+        # ])
+        # image = transform(image)
+        # im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
-        # im = plt.imread(img_path)
-        # im = cv2.resize(im, (256, 256))
-        _, _, w, h = im.shape
+        im = cv2.resize(im, (256, 256))
+        # _, _, w, h = im.shape
+        w, h, _ = im.shape
         im = im.astype(np.float64) / 255.0
         im = skimage.exposure.equalize_adapthist(im)
         im = tf_to_th_encoding(im)
@@ -379,9 +379,10 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
+                    for batch_num, (inp, transform_image, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
-                        cropped_img = crop_optical_dics(inp, crop_model)
+                        cropped_img = crop_optical_dics(
+                            transform_image, crop_model)
                         output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
