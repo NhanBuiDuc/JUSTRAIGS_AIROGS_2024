@@ -235,15 +235,15 @@ def main():
     transform = None
     polar_transform = None
 
-    if resize != None:
-        transform = torchvision.transforms.Compose({
-            transforms.ToTensor(),
-            transforms.Resize((resize, resize))
-        })
-    else:
-        transform = torchvision.transforms.Compose([
-            transforms.ToTensor(),
-        ])
+    # if resize != None:
+    #     transform = torchvision.transforms.Compose({
+    #         transforms.ToTensor(),
+    #         transforms.Resize((resize, resize))
+    #     })
+    # else:
+    transform = torchvision.transforms.Compose([
+        transforms.ToTensor(),
+    ])
 
     train_dataset = Airogs(
         path=data_dir,
