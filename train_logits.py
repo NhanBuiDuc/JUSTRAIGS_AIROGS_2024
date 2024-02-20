@@ -5,6 +5,7 @@ from torchvision.ops import masks_to_boxes
 from skimage.transform import warp_polar
 from skimage.exposure import equalize_adapthist
 import cv2
+from skimage.transform import resize
 from keras.models import Model
 from keras.layers import Dropout, Conv2D, MaxPooling2D, Input, UpSampling2D, Concatenate
 import tensorflow as tf
@@ -51,9 +52,9 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
             transforms.ToTensor(),
             transforms.Resize((512, 512))
         ])
-        # transform = transforms.Compose([
-        #     transforms.Resize((256, 256))
-        # ])
+        transform_128 = transforms.Compose([
+            transforms.Resize((128, 128))
+        ])
         # image = transform(image)
         im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
@@ -62,7 +63,9 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
         for index, image in enumerate(im):
             w, h, c = image.shape
             image = np.expand_dims(image, axis=0)
+            image_128 = resize(image, (128, 128), anti_aliasing=True)
             image = np.transpose(image, (0, 3, 1, 2))
+            image_128 = np.transpose(image_128, (0, 3, 1, 2))
             OwnPred = (crop_model1.predict(image)).astype(np.float64)
             mask = torch.Tensor(OwnPred)
             mask = mask.squeeze(1)
@@ -167,7 +170,8 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                     # Save the image to a file (e.g., in PNG format)
                     save_image.save(f"output_image_{index}.png")
                 except:
-                    OwnPred = (crop_model3.predict(image)).astype(np.float64)
+                    OwnPred = (crop_model3.predict(
+                        image_128)).astype(np.float64)
                     mask = torch.Tensor(OwnPred)
                     mask = mask.squeeze(1)
                     mask[mask > 0.35] = 1.0
@@ -199,13 +203,13 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         x2 = min(255, box[0][2])
                         y1 = max(0, box[0][1])
                         y2 = min(255, box[0][3])
-                        image = image.transpose((0, 2, 3, 1))
+                        image_128 = image_128.transpose((0, 2, 3, 1))
 
-                        image = image[0]
-                        fy = h/256
-                        fx = w/256
+                        image_128 = image_128[0]
+                        fy = h/128
+                        fx = w/128
                         # im = im.astype(np.float64) * 255.0
-                        cropped_im = image[int(
+                        cropped_im = image_128[int(
                             y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
                         cropped_im = cropped_im * 255
                         cropped_im = transform(cropped_im)
@@ -226,7 +230,7 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         save_image.save(f"output_image_{index}.png")
                     except:
                         OwnPred = (crop_model4.predict(
-                            image)).astype(np.float64)
+                            image_128)).astype(np.float64)
                         mask = torch.Tensor(OwnPred)
                         mask = mask.squeeze(1)
                         mask[mask > 0.35] = 1.0
@@ -265,13 +269,13 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         x2 = min(255, box[0][2])
                         y1 = max(0, box[0][1])
                         y2 = min(255, box[0][3])
-                        image = image.transpose((0, 2, 3, 1))
+                        image_128 = image_128.transpose((0, 2, 3, 1))
 
-                        image = image[0]
-                        fy = h/256
-                        fx = w/256
+                        image_128 = image_128[0]
+                        fy = h/128
+                        fx = w/128
                         # im = im.astype(np.float64) * 255.0
-                        cropped_im = image[int(
+                        cropped_im = image_128[int(
                             y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
                         cropped_im = cropped_im * 255
                         cropped_im = transform(cropped_im)
