@@ -37,7 +37,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
-def crop_optical_dics(image):
+def crop_optical_dics(image, crop_model):
 
     def tf_to_th_encoding(X):
         return np.rollaxis(X, 3, 1)
@@ -46,7 +46,8 @@ def crop_optical_dics(image):
         return np.rollaxis(X, 1, 4)
 
     with tf.device('/GPU:0'):
-        im = np.array(image)
+        # im = np.array(image)
+        im = image.detach().cpu().numpy()
         # im = plt.imread(img_path)
         im = cv2.resize(im, (256, 256))
         w, h, _ = im.shape
@@ -58,7 +59,7 @@ def crop_optical_dics(image):
         im = np.expand_dims(im, axis=0)
         im = tf_to_th_encoding(im)
 
-        OwnPred = (self.crop_model.predict(im)[0, 0]).astype(np.float64)
+        OwnPred = (crop_model.predict(im)[0, 0]).astype(np.float64)
         mask = torch.Tensor(OwnPred)
         mask[mask > 0.35] = 1.0
         mask[mask <= 0.35] = 0.0
@@ -95,7 +96,7 @@ def crop_optical_dics(image):
         fy = h/256
         fx = w/256
         # im = im.astype(np.float64) * 255.0
-        cropped_im = im[0, int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+        cropped_im = im[:, int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
         cropped_im = transform(cropped_im)
         return cropped_im
 
@@ -378,7 +379,7 @@ def main():
                     loader = train_loader if split == "Train" else val_loader
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
-                        cropped_img = crop_optical_dics(inp)
+                        cropped_img = crop_optical_dics(inp, crop_model)
                         output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
