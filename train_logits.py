@@ -47,7 +47,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
         return np.rollaxis(X, 1, 4)
 
     with tf.device('/GPU:0'):
-
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((512, 512))
+        ])
         # transform = transforms.Compose([
         #     transforms.Resize((256, 256))
         # ])
@@ -57,12 +60,9 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
         # im = im.astype(np.float64) / 255.0
         cropped_images = []
         for index, image in enumerate(im):
-            # im = cv2.resize(im, (256, 256))
             w, h, c = image.shape
             image = np.expand_dims(image, axis=0)
             image = np.transpose(image, (0, 3, 1, 2))
-            # im = skimage.exposure.equalize_adapthist(im)
-            # image = tf_to_th_encoding(image)
             OwnPred = (crop_model1.predict(image)).astype(np.float64)
             mask = torch.Tensor(OwnPred)
             mask = mask.squeeze(1)
@@ -82,20 +82,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                 box = masks_to_boxes(masks)
                 print(box.shape)
                 print(box)
-
-                pad_x = (box[0][2] - box[0][0]) * 0.3
-                pad_y = (box[0][3] - box[0][1]) * 0.3
-
-                pad = max(pad_x, pad_y)
-                pad = max(pad, 20)
-                transform = transforms.Compose([
-                    transforms.ToTensor(),
-                    transforms.Resize((512, 512))
-                ])
-                x1 = max(0, box[0][0] - pad)
-                x2 = min(255, box[0][2] + pad)
-                y1 = max(0, box[0][1] - pad)
-                y2 = min(255, box[0][3] + pad)
+                x1 = max(0, box[0][0])
+                x2 = min(255, box[0][2])
+                y1 = max(0, box[0][1])
+                y2 = min(255, box[0][3])
                 image = image.transpose((0, 2, 3, 1))
 
                 image = image[0]
@@ -104,9 +94,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                 # im = im.astype(np.float64) * 255.0
                 cropped_im = image[int(
                     y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
-                cropped_im = cropped_im * 255
+
                 cropped_im = transform(cropped_im)
                 cropped_images.append(cropped_im)
+                cropped_im = cropped_im * 255
                 save_image = np.array(cropped_im)
                 # save_image = save_image.transpose((1, 2, 0))
                 # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
@@ -150,10 +141,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         transforms.ToTensor(),
                         transforms.Resize((512, 512))
                     ])
-                    x1 = max(0, box[0][0] - pad)
-                    x2 = min(255, box[0][2] + pad)
-                    y1 = max(0, box[0][1] - pad)
-                    y2 = min(255, box[0][3] + pad)
+                    x1 = max(0, box[0][0])
+                    x2 = min(255, box[0][2])
+                    y1 = max(0, box[0][1])
+                    y2 = min(255, box[0][3])
                     image = image.transpose((0, 2, 3, 1))
 
                     image = image[0]
@@ -199,19 +190,19 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         print(box.shape)
                         print(box)
 
-                        pad_x = (box[0][2] - box[0][0]) * 0.3
-                        pad_y = (box[0][3] - box[0][1]) * 0.3
+                        # pad_x = (box[0][2] - box[0][0]) * 0.3
+                        # pad_y = (box[0][3] - box[0][1]) * 0.3
 
-                        pad = max(pad_x, pad_y)
-                        pad = max(pad, 20)
+                        # pad = max(pad_x, pad_y)
+                        # pad = max(pad, 20)
                         transform = transforms.Compose([
                             transforms.ToTensor(),
                             transforms.Resize((512, 512))
                         ])
-                        x1 = max(0, box[0][0] - pad)
-                        x2 = min(255, box[0][2] + pad)
-                        y1 = max(0, box[0][1] - pad)
-                        y2 = min(255, box[0][3] + pad)
+                        # x1 = max(0, box[0][0] - pad)
+                        # x2 = min(255, box[0][2] + pad)
+                        # y1 = max(0, box[0][1] - pad)
+                        # y2 = min(255, box[0][3] + pad)
 
                         x1 = max(0, box[0][0])
                         x2 = min(255, box[0][2])
@@ -262,32 +253,28 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                         print(box.shape)
                         print(box)
 
-                        pad_x = (box[0][2] - box[0][0]) * 0.3
-                        pad_y = (box[0][3] - box[0][1]) * 0.3
+                        # pad_x = (box[0][2] - box[0][0]) * 0.3
+                        # pad_y = (box[0][3] - box[0][1]) * 0.3
 
-                        pad = max(pad_x, pad_y)
-                        pad = max(pad, 20)
-                        transform = transforms.Compose([
-                            transforms.ToTensor(),
-                            transforms.Resize((512, 512))
-                        ])
+                        # pad = max(pad_x, pad_y)
+                        # pad = max(pad, 20)
                         box = masks_to_boxes(masks)
                         print(box.shape)
                         print(box)
 
-                        pad_x = (box[0][2] - box[0][0]) * 0.3
-                        pad_y = (box[0][3] - box[0][1]) * 0.3
+                        # pad_x = (box[0][2] - box[0][0]) * 0.3
+                        # pad_y = (box[0][3] - box[0][1]) * 0.3
 
-                        pad = max(pad_x, pad_y)
-                        pad = max(pad, 20)
+                        # pad = max(pad_x, pad_y)
+                        # pad = max(pad, 20)
                         transform = transforms.Compose([
                             transforms.ToTensor(),
                             transforms.Resize((512, 512))
                         ])
-                        x1 = max(0, box[0][0] - pad)
-                        x2 = min(255, box[0][2] + pad)
-                        y1 = max(0, box[0][1] - pad)
-                        y2 = min(255, box[0][3] + pad)
+                        # x1 = max(0, box[0][0] - pad)
+                        # x2 = min(255, box[0][2] + pad)
+                        # y1 = max(0, box[0][1] - pad)
+                        # y2 = min(255, box[0][3] + pad)
 
                         x1 = max(0, box[0][0])
                         x2 = min(255, box[0][2])
@@ -317,7 +304,7 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
 
                         # Save the image to a file (e.g., in PNG format)
                         save_image.save(f"output_image_{index}.png")
-        cropped_im = torch.cat(cropped_images, dim=0)
+        cropped_im = torch.stack(cropped_images, dim=0)
         return cropped_im
 
 
