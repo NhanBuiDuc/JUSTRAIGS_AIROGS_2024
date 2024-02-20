@@ -300,7 +300,7 @@ def main():
     lr = 0.01
     lr_step_period = None
     momentum = 0.1
-    batch_size = 64
+    batch_size = 32
     num_workers = 16
 
     data_dir = "AIROGS_2024"
@@ -422,9 +422,9 @@ def main():
     model1_256.load_weights('rim_256.hdf5')
     model2_256 = get_unet_light(img_rows=256, img_cols=256)
     model2_256.load_weights('drions.hdf5')
-    model3_128 = get_unet_light(img_rows=256, img_cols=256)
+    model3_128 = get_unet_light(img_rows=128, img_cols=128)
     model3_128.load_weights('rim_128.hdf5')
-    model4_128 = get_unet_light(img_rows=256, img_cols=256)
+    model4_128 = get_unet_light(img_rows=128, img_cols=128)
     model4_128.load_weights('drions.hdf5')
     desired_specificity = 0.95
     transform = None
