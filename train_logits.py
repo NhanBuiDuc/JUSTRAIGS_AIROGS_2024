@@ -37,6 +37,7 @@ from csv_logger import CsvLogger
 import logging
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4):
