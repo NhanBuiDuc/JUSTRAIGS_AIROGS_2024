@@ -300,8 +300,8 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
 
                                 # Save the image to a file (e.g., in PNG format)
                                 save_image.save(f"output_image_{index}.png")
-            finally:
-                cropped_images.append(image)
+                            finally:
+                                cropped_images.append(image)
         cropped_im = torch.stack(cropped_images, dim=0)
         return cropped_im
 
