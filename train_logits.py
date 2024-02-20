@@ -48,10 +48,10 @@ def crop_optical_dics(image, crop_model):
 
     with tf.device('/GPU:0'):
 
-        transform = transforms.Compose([
-            transforms.Resize((256, 256))
-        ])
-        image = transform(image)
+        # transform = transforms.Compose([
+        #     transforms.Resize((256, 256))
+        # ])
+        # image = transform(image)
         im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
         # im = cv2.resize(im, (256, 256))
@@ -105,7 +105,7 @@ def crop_optical_dics(image, crop_model):
 
 
 def main():
-    resize = 224
+    resize = 256
     epochs = 50
     lr = 0.01
     lr_step_period = None
@@ -235,15 +235,15 @@ def main():
     transform = None
     polar_transform = None
 
-    # if resize != None:
-    #     transform = torchvision.transforms.Compose({
-    #         transforms.ToTensor(),
-    #         transforms.Resize((resize, resize))
-    #     })
-    # else:
-    transform = torchvision.transforms.Compose([
-        transforms.ToTensor(),
-    ])
+    if resize != None:
+        transform = torchvision.transforms.Compose({
+            transforms.ToTensor(),
+            transforms.Resize((resize, resize))
+        })
+    else:
+        transform = torchvision.transforms.Compose([
+            transforms.ToTensor(),
+        ])
 
     train_dataset = Airogs(
         path=data_dir,
