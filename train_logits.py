@@ -1,4 +1,5 @@
 # import tensorflow.compat.v1 as tf
+from torchvision.transforms import ToPILImage
 from torchvision.utils import draw_bounding_boxes
 from torchvision.ops import masks_to_boxes
 from skimage.transform import warp_polar
@@ -379,10 +380,10 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, transform_image, target) in enumerate(tqdm(loader)):
+                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
                         cropped_img = crop_optical_dics(
-                            transform_image, crop_model)
+                            inp, crop_model)
                         output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)

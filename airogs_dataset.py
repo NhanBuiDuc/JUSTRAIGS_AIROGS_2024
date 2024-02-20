@@ -105,8 +105,8 @@ class Airogs(torchvision.datasets.VisionDataset):
             image = (image*255).astype('uint8')
 
         assert (self.transforms != None)
-        transform_image = self.transforms(image)
-        return image, transform_image, label
+        image = self.transforms(image)
+        return image, label
 
     def __len__(self):
         return len(self.df_files)
