@@ -63,9 +63,9 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
         for index, image in enumerate(im):
             w, h, c = image.shape
             image = np.expand_dims(image, axis=0)
-            image_128 = resize(image, (3, 128, 128), anti_aliasing=True)
+            image_128 = resize(image, (1, 128, 128, 3), anti_aliasing=True)
             image = np.transpose(image, (0, 3, 1, 2))
-            image_128 = np.transpose(image_128, (0, 3, 1, 2))
+            # image_128 = np.transpose(image_128, (0, 3, 1, 2))
             OwnPred = (crop_model1.predict(image)).astype(np.float64)
             mask = torch.Tensor(OwnPred)
             mask = mask.squeeze(1)
