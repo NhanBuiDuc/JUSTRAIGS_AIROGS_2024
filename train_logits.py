@@ -64,6 +64,7 @@ def crop_optical_dics(image, crop_model):
         im = tf_to_th_encoding(im)
 
         OwnPred = (crop_model.predict(im)[0, 0]).astype(np.float64)
+        im = np.transpose(im, (0, 1, 2, 3))
         mask = torch.Tensor(OwnPred)
         mask[mask > 0.35] = 1.0
         mask[mask <= 0.35] = 0.0
