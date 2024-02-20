@@ -47,9 +47,12 @@ def crop_optical_dics(image, crop_model):
 
     with tf.device('/GPU:0'):
         # im = np.array(image)
+        transform = transforms.Compose([
+            transforms.Resize((256, 256))
+        ])
         im = image.detach().cpu().numpy()
         # im = plt.imread(img_path)
-        im = cv2.resize(im, (256, 256))
+        # im = cv2.resize(im, (256, 256))
         w, h, _ = im.shape
         im = im.astype(np.float64) / 255.0
         im = skimage.exposure.equalize_adapthist(im)
