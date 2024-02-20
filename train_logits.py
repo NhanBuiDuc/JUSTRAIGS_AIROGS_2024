@@ -38,7 +38,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 
-def crop_optical_dics(image, crop_model):
+def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4):
 
     def tf_to_th_encoding(X):
         return np.rollaxis(X, 3, 1)
@@ -54,58 +54,270 @@ def crop_optical_dics(image, crop_model):
         # image = transform(image)
         im = image.detach().cpu().numpy()
         im = np.transpose(im, (0, 2, 3, 1))
-        # im = cv2.resize(im, (256, 256))
-        b, w, h, c = im.shape
         # im = im.astype(np.float64) / 255.0
-        # im = skimage.exposure.equalize_adapthist(im)
-        im = tf_to_th_encoding(im)
-
-        OwnPred = (crop_model.predict(im)).astype(np.float64)
-        im = np.transpose(im, (0, 1, 2, 3))
-        mask = torch.Tensor(OwnPred)
-        mask = mask.squeeze(1)
-        mask[mask > 0.35] = 1.0
-        mask[mask <= 0.35] = 0.0
-
-        # We get the unique colors, as these would be the object ids.
-        obj_ids = torch.unique(mask)
-
-        # first id is the background, so remove it.
-        obj_ids = obj_ids[1:]
-
-        # split the color-encoded mask into a set of boolean masks.
-        # Note that this snippet would work as well if the masks were float values instead of ints.
-        masks = mask == obj_ids[:, None, None]
         cropped_images = []
-        for index, mask in enumerate(masks):
-            mask = mask.unsqueeze(0)
-            box = masks_to_boxes(mask)
-            print(box.shape)
-            print(box)
+        for index, image in enumerate(im):
+            # im = cv2.resize(im, (256, 256))
+            w, h, c = image.shape
+            image = np.expand_dims(image, axis=0)
+            image = np.transpose(image, (0, 3, 1, 2))
+            # im = skimage.exposure.equalize_adapthist(im)
+            # image = tf_to_th_encoding(image)
+            OwnPred = (crop_model1.predict(image)).astype(np.float64)
+            mask = torch.Tensor(OwnPred)
+            mask = mask.squeeze(1)
+            mask[mask > 0.35] = 1.0
+            mask[mask <= 0.35] = 0.0
 
-            pad_x = (box[0][2] - box[0][0]) * 0.3
-            pad_y = (box[0][3] - box[0][1]) * 0.3
+            # We get the unique colors, as these would be the object ids.
+            obj_ids = torch.unique(mask)
 
-            pad = max(pad_x, pad_y)
-            pad = max(pad, 20)
-            transform = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Resize((512, 512))
-            ])
-            x1 = max(0, box[0][0] - pad).to(torch.int64)
-            x2 = min(255, box[0][2] + pad).to(torch.int64)
-            y1 = max(0, box[0][1] - pad).to(torch.int64)
-            y2 = min(255, box[0][3] + pad).to(torch.int64)
-            im = im.transpose((0, 2, 3, 1))
+            # first id is the background, so remove it.
+            obj_ids = obj_ids[1:]
 
-            fy = h/256
-            fx = w/256
-            # im = im.astype(np.float64) * 255.0
-            cropped_im = im[index][int(
-                y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
-            cropped_im = transform(cropped_im)
-            cropped_images.append(cropped_im)
-        cropped_im = torch.cat([cropped_images], dim=0)
+            # split the color-encoded mask into a set of boolean masks.
+            # Note that this snippet would work as well if the masks were float values instead of ints.
+            masks = mask == obj_ids[:, None, None]
+            try:
+                box = masks_to_boxes(masks)
+                print(box.shape)
+                print(box)
+
+                pad_x = (box[0][2] - box[0][0]) * 0.3
+                pad_y = (box[0][3] - box[0][1]) * 0.3
+
+                pad = max(pad_x, pad_y)
+                pad = max(pad, 20)
+                transform = transforms.Compose([
+                    transforms.ToTensor(),
+                    transforms.Resize((512, 512))
+                ])
+                x1 = max(0, box[0][0] - pad)
+                x2 = min(255, box[0][2] + pad)
+                y1 = max(0, box[0][1] - pad)
+                y2 = min(255, box[0][3] + pad)
+                image = image.transpose((0, 2, 3, 1))
+
+                image = image[0]
+                fy = h/256
+                fx = w/256
+                # im = im.astype(np.float64) * 255.0
+                cropped_im = image[int(
+                    y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+                cropped_im = cropped_im * 255
+                cropped_im = transform(cropped_im)
+                cropped_images.append(cropped_im)
+                save_image = np.array(cropped_im)
+                # save_image = save_image.transpose((1, 2, 0))
+                # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                # Ensure the values are in the range [0, 255]
+                save_image = save_image.astype(np.uint8)
+
+                # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                if save_image.shape[0] == 3:
+                    save_image = np.transpose(save_image, (1, 2, 0))
+                save_image = Image.fromarray(save_image)
+
+                # Save the image to a file (e.g., in PNG format)
+                save_image.save(f"output_image_{index}.png")
+            except:
+                OwnPred = (crop_model2.predict(image)).astype(np.float64)
+                mask = torch.Tensor(OwnPred)
+                mask = mask.squeeze(1)
+                mask[mask > 0.35] = 1.0
+                mask[mask <= 0.35] = 0.0
+
+                # We get the unique colors, as these would be the object ids.
+                obj_ids = torch.unique(mask)
+
+                # first id is the background, so remove it.
+                obj_ids = obj_ids[1:]
+
+                # split the color-encoded mask into a set of boolean masks.
+                # Note that this snippet would work as well if the masks were float values instead of ints.
+                masks = mask == obj_ids[:, None, None]
+                try:
+                    box = masks_to_boxes(masks)
+                    print(box.shape)
+                    print(box)
+
+                    pad_x = (box[0][2] - box[0][0]) * 0.3
+                    pad_y = (box[0][3] - box[0][1]) * 0.3
+
+                    pad = max(pad_x, pad_y)
+                    pad = max(pad, 20)
+                    transform = transforms.Compose([
+                        transforms.ToTensor(),
+                        transforms.Resize((512, 512))
+                    ])
+                    x1 = max(0, box[0][0] - pad)
+                    x2 = min(255, box[0][2] + pad)
+                    y1 = max(0, box[0][1] - pad)
+                    y2 = min(255, box[0][3] + pad)
+                    image = image.transpose((0, 2, 3, 1))
+
+                    image = image[0]
+                    fy = h/256
+                    fx = w/256
+                    # im = im.astype(np.float64) * 255.0
+                    cropped_im = image[int(
+                        y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+                    cropped_im = cropped_im * 255
+                    cropped_im = transform(cropped_im)
+                    cropped_images.append(cropped_im)
+                    save_image = np.array(cropped_im)
+                    # save_image = save_image.transpose((1, 2, 0))
+                    # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                    # Ensure the values are in the range [0, 255]
+                    save_image = save_image.astype(np.uint8)
+
+                    # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                    if save_image.shape[0] == 3:
+                        save_image = np.transpose(save_image, (1, 2, 0))
+                    save_image = Image.fromarray(save_image)
+
+                    # Save the image to a file (e.g., in PNG format)
+                    save_image.save(f"output_image_{index}.png")
+                except:
+                    OwnPred = (crop_model3.predict(image)).astype(np.float64)
+                    mask = torch.Tensor(OwnPred)
+                    mask = mask.squeeze(1)
+                    mask[mask > 0.35] = 1.0
+                    mask[mask <= 0.35] = 0.0
+
+                    # We get the unique colors, as these would be the object ids.
+                    obj_ids = torch.unique(mask)
+
+                    # first id is the background, so remove it.
+                    obj_ids = obj_ids[1:]
+
+                    # split the color-encoded mask into a set of boolean masks.
+                    # Note that this snippet would work as well if the masks were float values instead of ints.
+                    masks = mask == obj_ids[:, None, None]
+                    try:
+                        box = masks_to_boxes(masks)
+                        print(box.shape)
+                        print(box)
+
+                        pad_x = (box[0][2] - box[0][0]) * 0.3
+                        pad_y = (box[0][3] - box[0][1]) * 0.3
+
+                        pad = max(pad_x, pad_y)
+                        pad = max(pad, 20)
+                        transform = transforms.Compose([
+                            transforms.ToTensor(),
+                            transforms.Resize((512, 512))
+                        ])
+                        x1 = max(0, box[0][0] - pad)
+                        x2 = min(255, box[0][2] + pad)
+                        y1 = max(0, box[0][1] - pad)
+                        y2 = min(255, box[0][3] + pad)
+
+                        x1 = max(0, box[0][0])
+                        x2 = min(255, box[0][2])
+                        y1 = max(0, box[0][1])
+                        y2 = min(255, box[0][3])
+                        image = image.transpose((0, 2, 3, 1))
+
+                        image = image[0]
+                        fy = h/256
+                        fx = w/256
+                        # im = im.astype(np.float64) * 255.0
+                        cropped_im = image[int(
+                            y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+                        cropped_im = cropped_im * 255
+                        cropped_im = transform(cropped_im)
+                        cropped_images.append(cropped_im)
+                        save_image = np.array(cropped_im)
+                        # save_image = save_image.transpose((1, 2, 0))
+                        # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                        # Ensure the values are in the range [0, 255]
+                        save_image = save_image.astype(np.uint8)
+
+                        # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                        if save_image.shape[0] == 3:
+                            save_image = np.transpose(save_image, (1, 2, 0))
+                        save_image = Image.fromarray(save_image)
+
+                        # Save the image to a file (e.g., in PNG format)
+                        save_image.save(f"output_image_{index}.png")
+                    except:
+                        OwnPred = (crop_model4.predict(
+                            image)).astype(np.float64)
+                        mask = torch.Tensor(OwnPred)
+                        mask = mask.squeeze(1)
+                        mask[mask > 0.35] = 1.0
+                        mask[mask <= 0.35] = 0.0
+
+                        # We get the unique colors, as these would be the object ids.
+                        obj_ids = torch.unique(mask)
+
+                        # first id is the background, so remove it.
+                        obj_ids = obj_ids[1:]
+
+                        # split the color-encoded mask into a set of boolean masks.
+                        # Note that this snippet would work as well if the masks were float values instead of ints.
+                        masks = mask == obj_ids[:, None, None]
+                        box = masks_to_boxes(masks)
+                        print(box.shape)
+                        print(box)
+
+                        pad_x = (box[0][2] - box[0][0]) * 0.3
+                        pad_y = (box[0][3] - box[0][1]) * 0.3
+
+                        pad = max(pad_x, pad_y)
+                        pad = max(pad, 20)
+                        transform = transforms.Compose([
+                            transforms.ToTensor(),
+                            transforms.Resize((512, 512))
+                        ])
+                        box = masks_to_boxes(masks)
+                        print(box.shape)
+                        print(box)
+
+                        pad_x = (box[0][2] - box[0][0]) * 0.3
+                        pad_y = (box[0][3] - box[0][1]) * 0.3
+
+                        pad = max(pad_x, pad_y)
+                        pad = max(pad, 20)
+                        transform = transforms.Compose([
+                            transforms.ToTensor(),
+                            transforms.Resize((512, 512))
+                        ])
+                        x1 = max(0, box[0][0] - pad)
+                        x2 = min(255, box[0][2] + pad)
+                        y1 = max(0, box[0][1] - pad)
+                        y2 = min(255, box[0][3] + pad)
+
+                        x1 = max(0, box[0][0])
+                        x2 = min(255, box[0][2])
+                        y1 = max(0, box[0][1])
+                        y2 = min(255, box[0][3])
+                        image = image.transpose((0, 2, 3, 1))
+
+                        image = image[0]
+                        fy = h/256
+                        fx = w/256
+                        # im = im.astype(np.float64) * 255.0
+                        cropped_im = image[int(
+                            y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+                        cropped_im = cropped_im * 255
+                        cropped_im = transform(cropped_im)
+                        cropped_images.append(cropped_im)
+                        save_image = np.array(cropped_im)
+                        # save_image = save_image.transpose((1, 2, 0))
+                        # Assuming 'cropped_im' is your numpy array with shape (512, 512, 3) or (3, 512, 512)
+                        # Ensure the values are in the range [0, 255]
+                        save_image = save_image.astype(np.uint8)
+
+                        # If the array shape is (3, 512, 512), transpose it to (512, 512, 3)
+                        if save_image.shape[0] == 3:
+                            save_image = np.transpose(save_image, (1, 2, 0))
+                        save_image = Image.fromarray(save_image)
+
+                        # Save the image to a file (e.g., in PNG format)
+                        save_image.save(f"output_image_{index}.png")
+        cropped_im = torch.cat(cropped_images, dim=0)
         return cropped_im
 
 
@@ -233,9 +445,14 @@ def main():
 
         return model
 
-    crop_model = get_unet_light(img_rows=256, img_cols=256)
-
-    crop_model.load_weights('last_checkpoint.hdf5')
+    model1_256 = get_unet_light(img_rows=256, img_cols=256)
+    model1_256.load_weights('rim_256.hdf5')
+    model2_256 = get_unet_light(img_rows=256, img_cols=256)
+    model2_256.load_weights('drions.hdf5')
+    model3_128 = get_unet_light(img_rows=256, img_cols=256)
+    model3_128.load_weights('rim_128.hdf5')
+    model4_128 = get_unet_light(img_rows=256, img_cols=256)
+    model4_128.load_weights('drions.hdf5')
     desired_specificity = 0.95
     transform = None
     polar_transform = None
@@ -388,7 +605,7 @@ def main():
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
                         cropped_img = crop_optical_dics(
-                            inp, crop_model)
+                            inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
                         output = model(cropped_img.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
