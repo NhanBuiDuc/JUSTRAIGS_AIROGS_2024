@@ -80,8 +80,8 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
 
             # split the color-encoded mask into a set of boolean masks.
             # Note that this snippet would work as well if the masks were float values instead of ints.
-            masks = mask == obj_ids[:, None, None]
             try:
+                masks = mask == obj_ids[:, None, None]
                 box = masks_to_boxes(masks)
                 x1 = max(0, box[0][0] + 20)
                 x2 = min(255, box[0][2] + 20)
@@ -126,10 +126,10 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                 # first id is the background, so remove it.
                 obj_ids = obj_ids[1:]
 
-                # split the color-encoded mask into a set of boolean masks.
-                # Note that this snippet would work as well if the masks were float values instead of ints.
-                masks = mask == obj_ids[:, None, None]
                 try:
+                    # split the color-encoded mask into a set of boolean masks.
+                    # Note that this snippet would work as well if the masks were float values instead of ints.
+                    masks = mask == obj_ids[:, None, None]
                     box = masks_to_boxes(masks)
                     # pad_x = (box[0][2] - box[0][0]) * 0.3
                     # pad_y = (box[0][3] - box[0][1]) * 0.3
@@ -183,10 +183,11 @@ def crop_optical_dics(image, crop_model1, crop_model2, crop_model3, crop_model4)
                     # first id is the background, so remove it.
                     obj_ids = obj_ids[1:]
 
-                    # split the color-encoded mask into a set of boolean masks.
-                    # Note that this snippet would work as well if the masks were float values instead of ints.
-                    masks = mask == obj_ids[:, None, None]
                     try:
+
+                        # split the color-encoded mask into a set of boolean masks.
+                        # Note that this snippet would work as well if the masks were float values instead of ints.
+                        masks = mask == obj_ids[:, None, None]
                         box = masks_to_boxes(masks)
 
                         # pad_x = (box[0][2] - box[0][0]) * 0.3
