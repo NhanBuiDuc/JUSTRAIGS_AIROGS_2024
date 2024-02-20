@@ -76,30 +76,35 @@ def crop_optical_dics(image, crop_model):
         # split the color-encoded mask into a set of boolean masks.
         # Note that this snippet would work as well if the masks were float values instead of ints.
         masks = mask == obj_ids[:, None, None]
-        boxes = masks_to_boxes(masks)
-        print(boxes.shape)
-        print(boxes)
+        cropped_images = []
+        for mask in masks:
 
-        pad_x = (boxes[0][2] - boxes[0][0]) * 0.3
-        pad_y = (boxes[0][3] - boxes[0][1]) * 0.3
+            box = masks_to_boxes(mask)
+            print(box.shape)
+            print(box)
 
-        pad = max(pad_x, pad_y)
-        pad = max(pad, 20)
-        transform = transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Resize((512, 512))
-        ])
-        x1 = max(0, boxes[0][0] - pad).to(torch.int64)
-        x2 = min(255, boxes[0][2] + pad).to(torch.int64)
-        y1 = max(0, boxes[0][1] - pad).to(torch.int64)
-        y2 = min(255, boxes[0][3] + pad).to(torch.int64)
-        im = im.transpose((0, 2, 3, 1))
+            pad_x = (box[0][2] - box[0][0]) * 0.3
+            pad_y = (box[0][3] - box[0][1]) * 0.3
 
-        fy = h/256
-        fx = w/256
-        # im = im.astype(np.float64) * 255.0
-        cropped_im = im[:, int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
-        cropped_im = transform(cropped_im)
+            pad = max(pad_x, pad_y)
+            pad = max(pad, 20)
+            transform = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize((512, 512))
+            ])
+            x1 = max(0, box[0][0] - pad).to(torch.int64)
+            x2 = min(255, box[0][2] + pad).to(torch.int64)
+            y1 = max(0, box[0][1] - pad).to(torch.int64)
+            y2 = min(255, box[0][3] + pad).to(torch.int64)
+            im = im.transpose((0, 2, 3, 1))
+
+            fy = h/256
+            fx = w/256
+            # im = im.astype(np.float64) * 255.0
+            cropped_im = im[:, int(y1*fx):int(y2*fx), int(x1*fy):int(x2*fy), :]
+            cropped_im = transform(cropped_im)
+            cropped_images.append(cropped_im)
+        cropped_im = torch.cat([cropped_images], dim=0)
         return cropped_im
 
 
