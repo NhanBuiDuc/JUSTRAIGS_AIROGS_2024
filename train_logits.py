@@ -63,6 +63,7 @@ def crop_optical_dics(image, crop_model):
         OwnPred = (crop_model.predict(im)).astype(np.float64)
         im = np.transpose(im, (0, 1, 2, 3))
         mask = torch.Tensor(OwnPred)
+        masks = masks.squeeze(1)
         mask[mask > 0.35] = 1.0
         mask[mask <= 0.35] = 0.0
 
@@ -75,8 +76,8 @@ def crop_optical_dics(image, crop_model):
         # split the color-encoded mask into a set of boolean masks.
         # Note that this snippet would work as well if the masks were float values instead of ints.
         masks = mask == obj_ids[:, None, None]
-
-        boxes = masks_to_boxes(masks)
+        for mask in masks:
+            boxes = masks_to_boxes(masks)
         print(boxes.shape)
         print(boxes)
 
