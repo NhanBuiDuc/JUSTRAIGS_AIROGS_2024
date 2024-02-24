@@ -112,7 +112,7 @@ class Airogs(torchvision.datasets.VisionDataset):
 
         assert (self.transforms != None)
         image = self.transforms(image)
-        image = torch.tensor(image, dtype=torch.float32)
+        image = image.clone().detach().requires_grad_(True)
         return image, label
 
     def __len__(self):
