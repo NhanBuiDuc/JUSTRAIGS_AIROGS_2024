@@ -99,7 +99,7 @@ class Airogs(torchvision.datasets.VisionDataset):
         transform = torchvision.transforms.CenterCrop(256)
         image = transform(image)
         image = bitwise_not(np.array(image))
-        image = torch.tensor(image, dtype=torch.float32)
+        # image = torch.tensor(image, dtype=torch.float32)
         if self.polar_transforms:
             image = image = np.array(image, dtype=np.float64)
             image = polar(image)
@@ -109,9 +109,10 @@ class Airogs(torchvision.datasets.VisionDataset):
             image = equalize_adapthist(image)
             image = (image*255).astype('uint8')
             image = Image.fromarray(image)
-        image = torch.tensor(image, dtype=torch.float32)
+
         assert (self.transforms != None)
         image = self.transforms(image)
+        image = torch.tensor(image, dtype=torch.float32)
         return image, label
 
     def __len__(self):
