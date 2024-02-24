@@ -13,6 +13,7 @@ from skimage.transform import warp_polar
 import numpy as np
 from PIL import Image
 from skimage.exposure import equalize_adapthist
+from cv2 import bitwise_not
 
 
 def polar(image):
@@ -94,7 +95,7 @@ class Airogs(torchvision.datasets.VisionDataset):
 
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
-
+        image = bitwise_not(image)
         if self.polar_transforms:
             image = image = np.array(image, dtype=np.float64)
             image = polar(image)
