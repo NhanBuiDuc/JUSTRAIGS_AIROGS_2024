@@ -22,7 +22,7 @@ def polar(image):
 
 class Airogs(torchvision.datasets.VisionDataset):
 
-    def __init__(self, split='train', path='', images_dir_name='train', transforms=None, polar_transforms=False, apply_clahe=False):
+    def __init__(self, split='train', path='', images_dir_name='train', transforms=None, polar_transforms=False, apply_clahe=True):
         self.split = split
         self.path = path
         self.images_dir_name = images_dir_name
@@ -96,10 +96,10 @@ class Airogs(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
 
-        transform = torchvision.transforms.CenterCrop(256)
-        image = transform(image)
-        image = bitwise_not(np.array(image))
-        image = Image.fromarray(image)
+        # transform = torchvision.transforms.CenterCrop(256)
+        # image = transform(image)
+        # image = bitwise_not(np.array(image))
+        # image = Image.fromarray(image)
         # image = torch.tensor(image, dtype=torch.float32)
         if self.polar_transforms:
             image = image = np.array(image, dtype=np.float64)
