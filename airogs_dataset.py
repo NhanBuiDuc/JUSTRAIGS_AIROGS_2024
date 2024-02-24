@@ -104,6 +104,7 @@ class Airogs(torchvision.datasets.VisionDataset):
             image = np.array(image, dtype=np.float64) / 255.0
             image = equalize_adapthist(image)
             image = (image*255).astype('uint8')
+            image = Image.fromarray(image)
 
         assert (self.transforms != None)
         image = self.transforms(image)
