@@ -109,7 +109,7 @@ class Airogs(torchvision.datasets.VisionDataset):
             image = equalize_adapthist(image)
             image = (image*255).astype('uint8')
             image = Image.fromarray(image)
-
+        image = torch.tensor(image, dtype=torch.float32)
         assert (self.transforms != None)
         image = self.transforms(image)
         return image, label
