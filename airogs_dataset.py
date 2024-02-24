@@ -96,6 +96,8 @@ class Airogs(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         image = bitwise_not(image)
+        transform = torchvision.transforms.CenterCrop()
+        image = transform(image)
         if self.polar_transforms:
             image = image = np.array(image, dtype=np.float64)
             image = polar(image)
