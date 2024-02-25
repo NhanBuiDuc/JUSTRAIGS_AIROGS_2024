@@ -379,6 +379,7 @@ def modify_dataframe(dataframe, ratio=0.1):
     desired_nrg_count = int(ratio * count_rg)
     desired_nrg_index = nrg_index[:desired_nrg_count]
     new_dataframe = dataframe.loc[desired_nrg_index].copy()
-
+    # Reset the index
+    new_dataframe.reset_index(drop=True, inplace=True)
     # You might want to return the modified DataFrame if needed
     return new_dataframe
