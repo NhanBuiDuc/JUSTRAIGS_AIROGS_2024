@@ -23,7 +23,7 @@ def polar(image):
 
 class Airogs(torchvision.datasets.VisionDataset):
 
-    def __init__(self, split='train', batch_size=64, path='', images_dir_name='train', isModified=False, transforms=None, polar_transforms=False, apply_clahe=True):
+    def __init__(self, split='train', batch_size=64, path='', images_dir_name='train', isModified=False, transforms=None, polar_transforms=False, apply_clahe=False):
         self.split = split
         self.path = path
         self.images_dir_name = images_dir_name
