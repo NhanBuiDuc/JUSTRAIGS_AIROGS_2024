@@ -35,6 +35,7 @@ import wandb
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
+from efficient_net import EfficientNet
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -189,7 +190,8 @@ def main():
         model = resnet18(pretrained=pretrained)
         model.fc = nn.Linear(
             in_features=model.fc.in_features, out_features=1, bias=True)
-    model = timm.create_model('efficientnet_b0', num_classes=1)
+    # model = timm.create_model('efficientnet_b0', num_classes=1)
+    model = EfficientNet.from_name('efficientnet-b0')
     model = model.to(device)
 
     # wandb.watch(model)
