@@ -43,8 +43,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 def main():
     resize = 256
     epochs = 50
-    lr = 0.01
-    lr_step_period = None
+    lr = 0.0001
+    lr_step_period = 20
     momentum = 0.1
     batch_size = 64
     num_workers = 16
