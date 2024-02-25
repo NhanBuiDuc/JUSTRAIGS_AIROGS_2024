@@ -14,6 +14,7 @@ import numpy as np
 from PIL import Image
 from skimage.exposure import equalize_adapthist
 from cv2 import bitwise_not
+from utils import modify_dataframe
 
 
 def polar(image):
@@ -22,13 +23,16 @@ def polar(image):
 
 class Airogs(torchvision.datasets.VisionDataset):
 
-    def __init__(self, split='train', path='', images_dir_name='train', transforms=None, polar_transforms=False, apply_clahe=True):
+    def __init__(self, split='train', batch_size=64, path='', images_dir_name='train', isModified=False, transforms=None, polar_transforms=False, apply_clahe=True):
         self.split = split
         self.path = path
         self.images_dir_name = images_dir_name
         # columns = ['challenge_id', 'class', 'referable', 'gradable']
         self.df_files = pd.read_csv(
             os.path.join(self.path, self.split + ".csv"))
+        if isModified:
+            self.df_files = modify_dataframe(
+                self.df_files, batch_size=batch_size)
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
