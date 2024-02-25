@@ -325,37 +325,37 @@ def main():
             print("Skipping training\n")
             f.write("Skipping training\n")
 
-        # Testing
-        if run_test:
-            checkpoint = torch.load(os.path.join(output_dir, "best.pt"))
-            model.load_state_dict(checkpoint['state_dict'])
-            f.write("Best F1 {} from epoch {}\n".format(
-                checkpoint["best_f1"], checkpoint["epoch"]))
-            f.flush()
-            print("Best F1 {} from epoch {}\n".format(
-                checkpoint["best_f1"], checkpoint["epoch"]))
+        # # Testing
+        # if run_test:
+        #     checkpoint = torch.load(os.path.join(output_dir, "best.pt"))
+        #     model.load_state_dict(checkpoint['state_dict'])
+        #     f.write("Best F1 {} from epoch {}\n".format(
+        #         checkpoint["best_f1"], checkpoint["epoch"]))
+        #     f.flush()
+        #     print("Best F1 {} from epoch {}\n".format(
+        #         checkpoint["best_f1"], checkpoint["epoch"]))
 
-            model.eval()
-            labels = []
-            predictions = []
-            for (inp, target) in tqdm(test_loader):
-                labels += target
-                batch_prediction = model(inp.to(device))
-                _, batch_prediction = torch.max(batch_prediction, dim=1)
-                predictions += batch_prediction.detach().tolist()
-            accuracy = metrics.accuracy_score(labels, predictions)
-            f.write("Test Accuracy = {}\n".format(accuracy))
-            print("Test Accuracy = %0.2f" % (accuracy))
-            confusion = metrics.confusion_matrix(labels, predictions)
-            f.write("Test Confusion Matrix = {}\n".format(confusion))
-            print(confusion)
-            _f1_score = f1_score(labels, predictions, average="macro")
-            f.write("Test F1 Score = {}\n".format(_f1_score))
-            print("Test F1 = %0.2f" % (_f1_score))
-            auc = sklearn.metrics.roc_auc_score(labels, predictions)
-            f.write("Test AUC = {}\n".format(auc))
-            print("Test AUC = %0.2f" % (auc))
-            f.flush()
+        #     model.eval()
+        #     labels = []
+        #     predictions = []
+        #     for (inp, target) in tqdm(test_loader):
+        #         labels += target
+        #         batch_prediction = model(inp.to(device))
+        #         _, batch_prediction = torch.max(batch_prediction, dim=1)
+        #         predictions += batch_prediction.detach().tolist()
+        #     accuracy = metrics.accuracy_score(labels, predictions)
+        #     f.write("Test Accuracy = {}\n".format(accuracy))
+        #     print("Test Accuracy = %0.2f" % (accuracy))
+        #     confusion = metrics.confusion_matrix(labels, predictions)
+        #     f.write("Test Confusion Matrix = {}\n".format(confusion))
+        #     print(confusion)
+        #     _f1_score = f1_score(labels, predictions, average="macro")
+        #     f.write("Test F1 Score = {}\n".format(_f1_score))
+        #     print("Test F1 = %0.2f" % (_f1_score))
+        #     auc = sklearn.metrics.roc_auc_score(labels, predictions)
+        #     f.write("Test AUC = {}\n".format(auc))
+        #     print("Test AUC = %0.2f" % (auc))
+        #     f.flush()
 
 
 if __name__ == "__main__":

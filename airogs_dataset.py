@@ -32,7 +32,7 @@ class Airogs(torchvision.datasets.VisionDataset):
             os.path.join(self.path, self.split + ".csv"))
         if isModified:
             self.df_files = modify_dataframe(
-                self.df_files, ratio=0.1)
+                self.df_files, ratio=0.01)
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
