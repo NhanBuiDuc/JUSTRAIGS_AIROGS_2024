@@ -231,7 +231,8 @@ def main():
         if epoch_resume < epochs:
             f.write("Resuming training\n")
             for epoch in range(epoch_resume, epochs):
-                for split in ['Train', 'Val']:
+                for split in ['Train']:
+                    # for split in ['Train', 'Val']:
                     if split == "Train":
                         model.train()
                     else:
