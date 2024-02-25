@@ -241,9 +241,9 @@ def main():
                     loader = train_loader if split == "Train" else val_loader
                     for batch_num, (inp, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
-                        cropped_img = crop_optical_dics(
-                            inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
-                        output = model(cropped_img.to(device))
+                        # cropped_img = crop_optical_dics(
+                        #     inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
+                        output = model(inp.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
                         target = target.float().to(device)
