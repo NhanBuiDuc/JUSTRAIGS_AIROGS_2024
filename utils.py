@@ -367,7 +367,7 @@ def get_unet_light(img_rows=256, img_cols=256):
 # model4_128 = get_unet_light(img_rows=128, img_cols=128)
 # model4_128.load_weights('drions.hdf5')
 
-def modify_dataframe(dataframe, batch_size=64):
+def modify_dataframe(dataframe, ratio=0.1):
     nrg_index = dataframe.index[dataframe['Final Label'] == 'NRG'].tolist(
     )
 
@@ -375,7 +375,6 @@ def modify_dataframe(dataframe, batch_size=64):
     )
     count_rg = len(rg_index)
     count_nrg = len(nrg_index)
-    ratio = int(count_rg / count_nrg)
 
     desired_nrg_count = ratio * count_nrg
     desired_nrg_index = nrg_index[:desired_nrg_count]
