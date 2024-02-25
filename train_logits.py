@@ -192,7 +192,7 @@ def main():
             in_features=model.fc.in_features, out_features=1, bias=True)
     # model = timm.create_model('efficientnet_b0', num_classes=1)
     model = EfficientNet.from_name(
-        'efficientnet-b0,', in_channels=3, num_classes=1)
+        'efficientnet-b0', in_channels=3, num_classes=1)
     model = model.to(device)
 
     # wandb.watch(model)
