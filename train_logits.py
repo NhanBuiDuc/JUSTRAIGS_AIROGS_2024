@@ -278,7 +278,7 @@ def main():
                     accuracy = metrics.accuracy_score(labels, predictions)
                     confusion = metrics.confusion_matrix(labels, predictions)
                     tn, fp, fn, tp = confusion.ravel()
-                    print("TN {tn} FP {fp} FN{fn} TP{tp}")
+                    print(f"TN {tn} FP {fp} FN{fn} TP{tp}")
                     recall = metrics.recall_score(labels, predictions)
                     precision = metrics.precision_score(labels, predictions)
                     _f1_score = f1_score(labels, predictions, average="macro")
