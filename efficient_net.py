@@ -242,6 +242,12 @@ class EfficientNet(nn.Module):
         # set activation to memory efficient swish by default
         self._swish = MemoryEfficientSwish()
         self.sigmoid = nn.Sigmoid()
+        self.relu = nn.LeakyReLU()
+        self.fc1 = nn.Linear(1000, 500)
+        self.fc2 = nn.Linear(500, 250)
+        self.fc3 = nn.Linear(250, 100)
+        self.fc4 = nn.Linear(100, 50)
+        self.fc5 = nn.Linear(50, 1)
 
     def set_swish(self, memory_efficient=True):
         """Sets swish function as memory efficient (for training) or standard (for export).
@@ -345,7 +351,16 @@ class EfficientNet(nn.Module):
             x = x.flatten(start_dim=1)
             x = self._dropout(x)
             x = self._fc(x)
-
+            x = self.fc1(x)
+            x = self.relu(x)
+            x = self.fc2(x)
+            x = self.relu(x)
+            x = self.fc3(x)
+            x = self.relu(x)
+            x = self.fc4(x)
+            x = self.relu(x)
+            x = self.fc5(x)
+            x = self.relu(x)
             ##
             x = self.sigmoid(x)
         return x
