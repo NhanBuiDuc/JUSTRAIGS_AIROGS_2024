@@ -197,7 +197,6 @@ class EfficientNet(nn.Module):
         self._bn0 = nn.BatchNorm2d(
             num_features=out_channels, momentum=bn_mom, eps=bn_eps)
         image_size = calculate_output_image_size(image_size, 2)
-
         # Build blocks
         self._blocks = nn.ModuleList([])
         for block_args in self._blocks_args:
@@ -242,6 +241,7 @@ class EfficientNet(nn.Module):
 
         # set activation to memory efficient swish by default
         self._swish = MemoryEfficientSwish()
+        self.sigmoid = nn.Sigmoid()
 
     def set_swish(self, memory_efficient=True):
         """Sets swish function as memory efficient (for training) or standard (for export).
@@ -345,6 +345,9 @@ class EfficientNet(nn.Module):
             x = x.flatten(start_dim=1)
             x = self._dropout(x)
             x = self._fc(x)
+
+            ##
+            x = self.sigmoid(x)
         return x
 
     @classmethod
