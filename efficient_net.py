@@ -360,7 +360,6 @@ class EfficientNet(nn.Module):
             x = self.fc4(x)
             x = self.relu(x)
             x = self.fc5(x)
-            x = self.relu(x)
             ##
             x = self.sigmoid(x)
         return x
