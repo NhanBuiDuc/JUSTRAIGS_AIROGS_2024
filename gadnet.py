@@ -29,14 +29,10 @@ class Gadnet(nn.Module):
         self.w_2 = .5
         self.w_3 = .5
 
-    def forward(self, x):
-        clahe_x = equalize_adapthist(x.detach().cpu().numpy())
-        clahe_x = torch.tensor(clahe_x, data=torch.float32)
-        clahe_polar_x = self.polar(clahe_x)
-        clahe_polar_x = torch.tensor(clahe_polar_x, data=torch.float32)
-        prob1 = self.model_0(clahe_x)
-        prob2 = self.model_1(clahe_polar_x)
-        prob3 = self.model_1(clahe_x)
+    def forward(self, polar_image, clahe_image, polar_clahe_image,):
+        prob1 = self.model_0(clahe_image)
+        prob2 = self.model_1(polar_clahe_image)
+        prob3 = self.model_1(polar_image)
         avg_probs = (self.w_1*prob1 + self.w_2*prob2 + self.w_3*prob3)/3
         return avg_probs
 

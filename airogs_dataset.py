@@ -119,12 +119,11 @@ class Airogs(torchvision.datasets.VisionDataset):
         polar_clahe_image = Image.fromarray(polar_clahe_image)
 
         assert (self.transforms != None)
-        resized_image = self.transforms(original_image)
         polar_image = self.transforms(polar_image)
         clahe_image = self.transforms(clahe_image)
         polar_clahe_image = self.transforms(polar_clahe_image)
 
-        return resized_image, label, polar_image, clahe_image, polar_clahe_image
+        return polar_image, clahe_image, polar_clahe_image, label
 
     def __len__(self):
         return len(self.df_files)
