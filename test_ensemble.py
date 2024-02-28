@@ -145,11 +145,11 @@ def main():
             predictions = []
             loader = val_loader
             for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
-                labels += target
+                labels += target.detach().cpu().numpy()
                 output = model(polar_image.to(device), clahe_image.to(device),
                                polar_clahe_image.to(device))
                 _, batch_prediction = torch.max(output, dim=1)
-                predictions += batch_prediction.detach().tolist()
+                predictions += batch_prediction.detach().cpu().numpy()
                 batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
 
