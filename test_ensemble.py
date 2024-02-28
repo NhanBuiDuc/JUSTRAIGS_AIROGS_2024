@@ -175,14 +175,18 @@ def main():
             _f1_score = f1_score(labels, predictions, average="macro")
 
             accuracy = metrics.accuracy_score(labels, predictions)
-            f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
-                avrg_loss, area_under_the_curve, _f1_score, accuracy))
-            print("Test Accuracy = %0.2f" % (accuracy))
+            print(f"accuracy: {accuracy}, f1: {_f1_score}")
+            print(f"avrg_loss: {avrg_loss}")
+            tn, fp, fn, tp = confusion.ravel()
+            print(f"TN {tn} FP {fp} FN{fn} TP{tp}")
+            recall = metrics.recall_score(labels, predictions)
+            precision = metrics.precision_score(labels, predictions)
+            specificity = int((tn)/(tn+fp))
+            sensitivity = int((tp)/(tp+fn))
+            print(f"recall: {recall}, precision: {precision}")
+            print(f"specificity: {specificity}, sensitivity: {sensitivity}")
             confusion = metrics.confusion_matrix(labels, predictions)
-            f.write("Test Confusion Matrix = {}\n".format(confusion))
             print(confusion)
-            f.write("Test F1 Score = {}\n".format(_f1_score))
-            f.write("Test AUC = {}\n".format(area_under_the_curve))
             f.flush()
         # Testing
         if run_test:
