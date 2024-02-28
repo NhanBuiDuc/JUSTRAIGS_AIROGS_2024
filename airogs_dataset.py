@@ -40,14 +40,14 @@ class Airogs(torchvision.datasets.VisionDataset):
 
     def __getitem__(self, index):
         file_name = self.df_files.loc[index, 'Eye ID']
-        image = None
+        original_image = None
         try:
             # Attempt to open the image with .jpg extension
             image_path = os.path.join(
                 self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
-            image = Image.open(image_path)
+            original_image = Image.open(image_path)
 
         except FileNotFoundError:
             try:
@@ -56,7 +56,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                     self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
-                image = Image.open(image_path).convert(
+                original_image = Image.open(image_path).convert(
                     'RGB')  # Adjust as needed
             except FileNotFoundError:
                 try:
@@ -65,7 +65,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                         self.path, self.images_dir_name, file_name + ".jpeg")
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
-                    image = Image.open(image_path)
+                    original_image = Image.open(image_path)
                 except FileNotFoundError:
                     try:
                         # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -73,7 +73,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                             self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
-                        image = Image.open(image_path)
+                        original_image = Image.open(image_path)
                     except FileNotFoundError:
                         try:
                             # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -81,7 +81,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                                 self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
-                            image = Image.open(image_path)
+                            original_image = Image.open(image_path)
                         except FileNotFoundError:
                             try:
                                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -89,7 +89,7 @@ class Airogs(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
-                                image = Image.open(image_path).convert(
+                                original_image = Image.open(image_path).convert(
                                     'RGB')  # Adjust as needed
                             except FileNotFoundError:
                                 # Handle the case where both .jpg and .png files are not found
@@ -105,19 +105,26 @@ class Airogs(torchvision.datasets.VisionDataset):
         # image = bitwise_not(np.array(image))
         # image = Image.fromarray(image)
         # image = torch.tensor(image, dtype=torch.float32)
-        if self.polar_transforms:
-            image = image = np.array(image, dtype=np.float64)
-            image = polar(image)
+        polar_image = np.array(original_image, dtype=np.float64)
+        polar_image = polar(polar_image)
 
-        if self.apply_clahe:
-            image = np.array(image, dtype=np.float64) / 255.0
-            image = equalize_adapthist(image)
-            image = (image*255).astype('uint8')
-            image = Image.fromarray(image)
+        clahe_image = np.array(original_image, dtype=np.float64) / 255.0
+        clahe_image = equalize_adapthist(clahe_image)
+        clahe_image = (clahe_image*255).astype('uint8')
+        clahe_image = Image.fromarray(clahe_image)
+
+        polar_clahe_image = polar_image / 255.0
+        polar_clahe_image = equalize_adapthist(polar_clahe_image)
+        polar_clahe_image = (polar_clahe_image*255).astype('uint8')
+        polar_clahe_image = Image.fromarray(polar_clahe_image)
 
         assert (self.transforms != None)
-        image = self.transforms(image)
-        return image, label
+        resized_image = self.transforms(original_image)
+        polar_image = self.transforms(polar_image)
+        clahe_image = self.transforms(clahe_image)
+        polar_clahe_image = self.transforms(polar_clahe_image)
+
+        return resized_image, label, polar_image, clahe_image, polar_clahe_image
 
     def __len__(self):
         return len(self.df_files)
