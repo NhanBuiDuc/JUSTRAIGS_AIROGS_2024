@@ -99,7 +99,7 @@ class Airogs(torchvision.datasets.VisionDataset):
 
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
-        label = torch.tensor(label, dtype=torch.float32)
+        label = torch.tensor(label, dtype=torch.int32)
         # original_image = np.array(original_image, dtype=np.float64)
         # polar_image = polar(polar_image)
 
