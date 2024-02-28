@@ -176,13 +176,13 @@ def main():
 
             accuracy = metrics.accuracy_score(labels, predictions)
             f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
-                avrg_loss, auc, _f1_score, accuracy))
+                avrg_loss, area_under_the_curve, _f1_score, accuracy))
             print("Test Accuracy = %0.2f" % (accuracy))
             confusion = metrics.confusion_matrix(labels, predictions)
             f.write("Test Confusion Matrix = {}\n".format(confusion))
             print(confusion)
             f.write("Test F1 Score = {}\n".format(_f1_score))
-            f.write("Test AUC = {}\n".format(auc))
+            f.write("Test AUC = {}\n".format(area_under_the_curve))
             f.flush()
         # Testing
         if run_test:
