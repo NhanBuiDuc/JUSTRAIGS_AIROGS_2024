@@ -144,9 +144,10 @@ def main():
             labels = []
             predictions = []
             loader = val_loader
-            for batch_num, (inp, target) in enumerate(tqdm(loader)):
+            for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
                 labels += target
-                output = model(inp.to(device))
+                output = model(polar_image.to(device), clahe_image.to(device),
+                               polar_clahe_image.to(device))
                 _, batch_prediction = torch.max(output, dim=1)
                 predictions += batch_prediction.detach().tolist()
                 batch_loss = criterion(output, target.to(device))
@@ -161,7 +162,7 @@ def main():
 
             # Calculate the AUC (Area Under the Curve)
             roc_auc = auc(fpr, tpr)
-        
+
             # Calculate sensitivity at 95% specificity
             desired_specificity = 0.95
             idx = np.argmax(fpr >= (1 - desired_specificity))
