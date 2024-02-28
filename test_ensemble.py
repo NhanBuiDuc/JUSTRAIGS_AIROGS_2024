@@ -148,8 +148,9 @@ def main():
                 labels.append(target.detach().cpu().numpy())
                 output = model(polar_image.to(device), clahe_image.to(device),
                                polar_clahe_image.to(device))
-                _, batch_prediction = torch.max(output, dim=1)
-                predictions.append(batch_prediction.detach().cpu().numpy())
+                # _, batch_prediction = torch.max(output, dim=1)
+                # predictions.append(batch_prediction.detach().cpu().numpy())
+                predictions.append(output.detach().cpu().numpy())
                 batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
 
@@ -158,8 +159,10 @@ def main():
                 predictions, axis=0)
             labels = np.concatenate(labels, axis=0)
             confusion = metrics.confusion_matrix(labels, predictions)
+            # Compute the difference in probabilities
+            y_score = predictions[:, 1] - predictions[:, 0]
             # Compute the ROC curve
-            fpr, tpr, thresholds = roc_curve(labels, predictions)
+            fpr, tpr, thresholds = roc_curve(labels, y_score)
             area_under_the_curve = sklearn.metrics.roc_auc_score(
                 labels, predictions)
             # Calculate the AUC (Area Under the Curve)
