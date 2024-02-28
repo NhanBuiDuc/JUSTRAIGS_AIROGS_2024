@@ -144,7 +144,6 @@ def main():
             loader = val_loader
             for batch_num, (inp, target) in enumerate(tqdm(loader)):
                 labels += target
-                optimizer.zero_grad()
                 output = model(inp.to(device))
                 _, batch_prediction = torch.max(output, dim=1)
                 predictions += batch_prediction.detach().tolist()
@@ -152,16 +151,25 @@ def main():
                 epoch_total_loss += batch_loss.item()
 
             avrg_loss = epoch_total_loss / loader.dataset.__len__()
-            accuracy = metrics.accuracy_score(labels, predictions)
-            confusion = metrics.confusion_matrix(labels, predictions)
             _f1_score = f1_score(labels, predictions, average="macro")
             auc = sklearn.metrics.roc_auc_score(labels, predictions)
             print("%s loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f" %
                   (avrg_loss, auc, _f1_score, accuracy))
             f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
                 avrg_loss, auc, _f1_score, accuracy))
+            accuracy = metrics.accuracy_score(labels, predictions)
+            f.write("Test Accuracy = {}\n".format(accuracy))
+            print("Test Accuracy = %0.2f" % (accuracy))
+            confusion = metrics.confusion_matrix(labels, predictions)
+            f.write("Test Confusion Matrix = {}\n".format(confusion))
+            print(confusion)
+            _f1_score = f1_score(labels, predictions, average="macro")
+            f.write("Test F1 Score = {}\n".format(_f1_score))
+            print("Test F1 = %0.2f" % (_f1_score))
+            auc = sklearn.metrics.roc_auc_score(labels, predictions)
+            f.write("Test AUC = {}\n".format(auc))
+            print("Test AUC = %0.2f" % (auc))
             f.flush()
-
         # Testing
         if run_test:
             checkpoint = torch.load(os.path.join(output_dir, "best.pt"))
