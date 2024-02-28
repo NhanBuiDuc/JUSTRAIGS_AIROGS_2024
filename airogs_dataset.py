@@ -101,7 +101,7 @@ class Airogs(torchvision.datasets.VisionDataset):
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
         original_image = np.array(original_image, dtype=np.float64)
-        polar_image = polar(polar_image)
+        polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
         clahe_image = equalize_adapthist(clahe_image)
