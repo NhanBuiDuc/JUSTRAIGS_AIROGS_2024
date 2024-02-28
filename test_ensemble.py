@@ -157,6 +157,7 @@ def main():
             predictions = np.concatenate(
                 predictions, axis=0)
             labels = np.concatenate(labels, axis=0)
+            confusion = metrics.confusion_matrix(labels, predictions)
             # Compute the ROC curve
             fpr, tpr, thresholds = roc_curve(labels, predictions)
             area_under_the_curve = sklearn.metrics.roc_auc_score(
@@ -185,7 +186,6 @@ def main():
             sensitivity = int((tp)/(tp+fn))
             print(f"recall: {recall}, precision: {precision}")
             print(f"specificity: {specificity}, sensitivity: {sensitivity}")
-            confusion = metrics.confusion_matrix(labels, predictions)
             print(confusion)
             f.flush()
         # Testing
