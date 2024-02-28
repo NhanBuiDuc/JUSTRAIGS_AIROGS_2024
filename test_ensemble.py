@@ -176,7 +176,7 @@ def main():
             threshold = thresholds[idx]
             sensitivity_at_desired_specificity = tpr[idx]
             predictions = (
-                logits >= threshold).astype(int)
+                score >= threshold).astype(int)
             area_under_the_curve = sklearn.metrics.roc_auc_score(
                 labels, predictions)
             print(
