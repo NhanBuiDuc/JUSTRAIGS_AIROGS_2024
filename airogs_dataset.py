@@ -100,26 +100,28 @@ class Airogs(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.float32)
-        original_image = np.array(original_image, dtype=np.float64)
-        polar_image = polar(polar_image)
+        # original_image = np.array(original_image, dtype=np.float64)
+        # polar_image = polar(polar_image)
 
-        clahe_image = original_image / 255.0
-        clahe_image = equalize_adapthist(clahe_image)
-        clahe_image = (clahe_image*255).astype('uint8')
-        clahe_image = Image.fromarray(clahe_image)
+        # clahe_image = original_image / 255.0
+        # clahe_image = equalize_adapthist(clahe_image)
+        # clahe_image = (clahe_image*255).astype('uint8')
+        # clahe_image = Image.fromarray(clahe_image)
 
-        polar_clahe_image = polar_image / 255.0
-        polar_clahe_image = equalize_adapthist(polar_clahe_image)
-        polar_clahe_image = (polar_clahe_image*255).astype('uint8')
-        polar_clahe_image = Image.fromarray(polar_clahe_image)
+        # polar_clahe_image = polar_image / 255.0
+        # polar_clahe_image = equalize_adapthist(polar_clahe_image)
+        # polar_clahe_image = (polar_clahe_image*255).astype('uint8')
+        # polar_clahe_image = Image.fromarray(polar_clahe_image)
 
-        assert (self.transforms != None)
-        polar_image = Image.fromarray(polar_image.astype("uint8"))
-        polar_image = self.transforms(polar_image)
-        clahe_image = self.transforms(clahe_image)
-        polar_clahe_image = self.transforms(polar_clahe_image)
+        # assert (self.transforms != None)
+        # polar_image = Image.fromarray(polar_image.astype("uint8"))
+        # polar_image = self.transforms(polar_image)
+        # clahe_image = self.transforms(clahe_image)
+        # polar_clahe_image = self.transforms(polar_clahe_image)
 
-        return polar_image, clahe_image, polar_clahe_image, label
+        # return polar_image, clahe_image, polar_clahe_image, label
+        original_image = self.transforms(original_image)
+        return original_image, original_image, original_image, label
 
     def __len__(self):
         return len(self.df_files)
