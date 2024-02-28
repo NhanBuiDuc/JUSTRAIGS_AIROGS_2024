@@ -21,6 +21,7 @@ import timm
 from airogs_dataset import Airogs
 import wandb
 from gadnet import Gadnet
+from sklearn.metrics import roc_curve, roc_auc_score, auc
 
 
 def main():
@@ -48,6 +49,7 @@ def main():
     else:
         device = torch.device("cpu")
 
+    desired_specificity = 0.95
     transform = None
     polar_transform = None
 
@@ -150,6 +152,23 @@ def main():
                 batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
 
+            ######
+            predictions = np.concatenate(
+                predictions, axis=0)
+            labels = np.concatenate(labels, axis=0)
+            # Compute the ROC curve
+            fpr, tpr, thresholds = roc_curve(labels, predictions)
+
+            # Calculate the AUC (Area Under the Curve)
+            roc_auc = auc(fpr, tpr)
+        
+            # Calculate sensitivity at 95% specificity
+            desired_specificity = 0.95
+            idx = np.argmax(fpr >= (1 - desired_specificity))
+            sensitivity_at_desired_specificity = tpr[idx]
+            print(
+                f"threshold: {thresholds}, roc_auc {roc_auc} sensitivity {sensitivity_at_desired_specificity}")
+            #####
             avrg_loss = epoch_total_loss / loader.dataset.__len__()
             _f1_score = f1_score(labels, predictions, average="macro")
             auc = sklearn.metrics.roc_auc_score(labels, predictions)
@@ -169,6 +188,7 @@ def main():
             auc = sklearn.metrics.roc_auc_score(labels, predictions)
             f.write("Test AUC = {}\n".format(auc))
             print("Test AUC = %0.2f" % (auc))
+
             f.flush()
         # Testing
         if run_test:
