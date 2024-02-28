@@ -159,7 +159,7 @@ def main():
             labels = np.concatenate(labels, axis=0)
             # Compute the ROC curve
             fpr, tpr, thresholds = roc_curve(labels, predictions)
-
+            auc = sklearn.metrics.roc_auc_score(labels, predictions)
             # Calculate the AUC (Area Under the Curve)
             roc_auc = auc(fpr, tpr)
 
@@ -172,7 +172,7 @@ def main():
             #####
             avrg_loss = epoch_total_loss / loader.dataset.__len__()
             _f1_score = f1_score(labels, predictions, average="macro")
-            auc = sklearn.metrics.roc_auc_score(labels, predictions)
+
             print("%s loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f" %
                   (avrg_loss, auc, _f1_score, accuracy))
             f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
