@@ -36,6 +36,8 @@ from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
 from efficient_net import EfficientNet
+import torch.nn.functional as F
+
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

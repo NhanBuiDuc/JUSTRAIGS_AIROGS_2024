@@ -22,6 +22,7 @@ from airogs_dataset import Airogs
 import wandb
 from gadnet import Gadnet
 from sklearn.metrics import roc_curve, roc_auc_score, auc
+import torch.nn.functional as F
 
 
 def main():
@@ -148,9 +149,11 @@ def main():
                 labels.append(target.detach().cpu().numpy())
                 output = model(polar_image.to(device), clahe_image.to(device),
                                polar_clahe_image.to(device))
+                output = F.softmax(output, dim=0)
                 # _, batch_prediction = torch.max(output, dim=1)
                 # predictions.append(batch_prediction.detach().cpu().numpy())
                 logits.append(output.detach().cpu().numpy())
+
                 batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
 
