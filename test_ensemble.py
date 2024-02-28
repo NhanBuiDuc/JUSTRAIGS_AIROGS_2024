@@ -142,7 +142,7 @@ def main():
 
             epoch_total_loss = 0
             labels = []
-            predictions = []
+            logits = []
             loader = val_loader
             for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
                 labels.append(target.detach().cpu().numpy())
@@ -150,32 +150,37 @@ def main():
                                polar_clahe_image.to(device))
                 # _, batch_prediction = torch.max(output, dim=1)
                 # predictions.append(batch_prediction.detach().cpu().numpy())
-                predictions.append(output.detach().cpu().numpy())
+                logits.append(output.detach().cpu().numpy())
                 batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
 
             ######
-            predictions = np.concatenate(
+            logits = np.concatenate(
                 predictions, axis=0)
             labels = np.concatenate(labels, axis=0)
-            confusion = metrics.confusion_matrix(labels, predictions)
+
             # Compute the difference in probabilities
-            predictions = predictions[:, 1] - predictions[:, 0]
+            score = predictions[:, 1] - predictions[:, 0]
             # Compute the ROC curve
-            fpr, tpr, thresholds = roc_curve(labels, predictions)
-            area_under_the_curve = sklearn.metrics.roc_auc_score(
-                labels, predictions)
+            fpr, tpr, thresholds = roc_curve(labels, score)
+
             # Calculate the AUC (Area Under the Curve)
             roc_auc = sklearn.metrics.auc(fpr, tpr)
 
             # Calculate sensitivity at 95% specificity
             desired_specificity = 0.95
             idx = np.argmax(fpr >= (1 - desired_specificity))
+            threshold = thresholds[idx]
             sensitivity_at_desired_specificity = tpr[idx]
+            predictions = (
+                score >= threshold).astype(int)
+            area_under_the_curve = sklearn.metrics.roc_auc_score(
+                labels, predictions)
             print(
-                f"threshold: {thresholds}, roc_auc {roc_auc}, auc {area_under_the_curve}, sensitivity {sensitivity_at_desired_specificity}")
+                f"threshold: {threshold}, roc_auc {roc_auc}, auc {area_under_the_curve}, sensitivity {sensitivity_at_desired_specificity}")
             #####
             avrg_loss = epoch_total_loss / loader.dataset.__len__()
+            confusion = metrics.confusion_matrix(labels, predictions)
             _f1_score = f1_score(labels, predictions, average="macro")
 
             accuracy = metrics.accuracy_score(labels, predictions)
