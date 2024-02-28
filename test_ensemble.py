@@ -160,9 +160,9 @@ def main():
             labels = np.concatenate(labels, axis=0)
             confusion = metrics.confusion_matrix(labels, predictions)
             # Compute the difference in probabilities
-            y_score = predictions[:, 1] - predictions[:, 0]
+            predictions = predictions[:, 1] - predictions[:, 0]
             # Compute the ROC curve
-            fpr, tpr, thresholds = roc_curve(labels, y_score)
+            fpr, tpr, thresholds = roc_curve(labels, predictions)
             area_under_the_curve = sklearn.metrics.roc_auc_score(
                 labels, predictions)
             # Calculate the AUC (Area Under the Curve)
