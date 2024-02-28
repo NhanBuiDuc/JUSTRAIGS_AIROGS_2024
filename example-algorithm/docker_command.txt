@@ -1,0 +1,6 @@
+docker build --tag example-algorithm .; `
+    Remove-Item -Path test\output\* -Force; `
+    docker run --rm --gpus all `
+    --volume ${PWD}\test\input:/input `
+    --volume ${PWD}\test\output:/output `
+    example-algorithm
