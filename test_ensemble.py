@@ -159,16 +159,17 @@ def main():
             labels = np.concatenate(labels, axis=0)
             # Compute the ROC curve
             fpr, tpr, thresholds = roc_curve(labels, predictions)
-            auc = sklearn.metrics.roc_auc_score(labels, predictions)
+            area_under_the_curve = sklearn.metrics.roc_auc_score(
+                labels, predictions)
             # Calculate the AUC (Area Under the Curve)
-            roc_auc = auc(fpr, tpr)
+            roc_auc = sklearn.metrics.auc(fpr, tpr)
 
             # Calculate sensitivity at 95% specificity
             desired_specificity = 0.95
             idx = np.argmax(fpr >= (1 - desired_specificity))
             sensitivity_at_desired_specificity = tpr[idx]
             print(
-                f"threshold: {thresholds}, roc_auc {roc_auc} sensitivity {sensitivity_at_desired_specificity}")
+                f"threshold: {thresholds}, roc_auc {roc_auc}, auc {area_under_the_curve}, sensitivity {sensitivity_at_desired_specificity}")
             #####
             avrg_loss = epoch_total_loss / loader.dataset.__len__()
             _f1_score = f1_score(labels, predictions, average="macro")
@@ -218,7 +219,7 @@ def main():
             _f1_score = f1_score(labels, predictions, average="macro")
             f.write("Test F1 Score = {}\n".format(_f1_score))
             print("Test F1 = %0.2f" % (_f1_score))
-            auc = sklearn.metrics.roc_auc_score(labels, predictions)
+            # auc = sklearn.metrics.roc_auc_score(labels, predictions)
             f.write("Test AUC = {}\n".format(auc))
             print("Test AUC = %0.2f" % (auc))
             f.flush()
