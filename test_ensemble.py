@@ -175,7 +175,7 @@ def main():
             _f1_score = f1_score(labels, predictions, average="macro")
 
             print("%s loss=%0.4f AUC=%0.4f F1=%0.4f  Accuracy=%0.4f" %
-                  (avrg_loss, auc, _f1_score, accuracy))
+                  (avrg_loss, area_under_the_curve, _f1_score, accuracy))
             f.write("%s Epoch {} - loss={} AUC={} F1={} Accuracy={}\n".format(
                 avrg_loss, auc, _f1_score, accuracy))
             accuracy = metrics.accuracy_score(labels, predictions)
