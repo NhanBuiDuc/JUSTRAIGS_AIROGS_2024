@@ -41,32 +41,12 @@ def main():
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
 
-    wandb.init(name=name, project="airogs_final", entity="airogs")
-
     os.makedirs(output_dir, exist_ok=True)
 
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
-
-    wandb.config.update({
-        "epochs": epochs,
-        "lr": lr,
-        "lr_step_period": lr_step_period,
-        "momentun": momentum,
-        "batch_size": batch_size,
-        "num_workers": num_workers,
-        "data_dir": data_dir,
-        "images_dir_name": images_dir_name,
-        "output_dir": output_dir,
-        "run_test": run_test,
-        "pretrained": pretrained,
-        "model": model_name,
-        "optimizer": optimizer_name,
-        "device": device.type,
-        "resize": resize
-    })
 
     transform = None
     polar_transform = None
@@ -103,11 +83,6 @@ def main():
         transforms=transform
     )
 
-    train_loader = DataLoader(train_dataset,
-                              batch_size=batch_size,
-                              shuffle=True,
-                              num_workers=num_workers,
-                              )
     val_loader = DataLoader(val_dataset,
                             batch_size=batch_size,
                             shuffle=True,
@@ -126,16 +101,8 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
 
-    wandb.config.update({
-        "train_count": len(train_dataset),
-        "val_count": len(val_dataset),
-        "class_weights": ", ".join(map(lambda x: str(x), weight_referable))
-    })
-
     model = Gadnet(device)
     model = model.to(device)
-
-    wandb.watch(model)
 
     criterion = CrossEntropyLoss(
         weight=torch.from_numpy(weight_referable).to(device))
