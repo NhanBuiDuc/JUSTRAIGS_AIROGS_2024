@@ -159,11 +159,11 @@ def main():
 
             ######
             logits = np.concatenate(
-                predictions, axis=0)
+                logits, axis=0)
             labels = np.concatenate(labels, axis=0)
 
             # Compute the difference in probabilities
-            score = predictions[:, 1] - predictions[:, 0]
+            score = logits[:, 1] - logits[:, 0]
             # Compute the ROC curve
             fpr, tpr, thresholds = roc_curve(labels, score)
 
@@ -176,7 +176,7 @@ def main():
             threshold = thresholds[idx]
             sensitivity_at_desired_specificity = tpr[idx]
             predictions = (
-                score >= threshold).astype(int)
+                logits >= threshold).astype(int)
             area_under_the_curve = sklearn.metrics.roc_auc_score(
                 labels, predictions)
             print(
