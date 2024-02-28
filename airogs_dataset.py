@@ -119,7 +119,7 @@ class Airogs(torchvision.datasets.VisionDataset):
         polar_clahe_image = Image.fromarray(polar_clahe_image)
 
         assert (self.transforms != None)
-        polar_image = Image.fromarray(polar_image / 255.0)
+        polar_image = Image.fromarray(polar_image.astype("uint8"))
         polar_image = self.transforms(polar_image)
         clahe_image = self.transforms(clahe_image)
         polar_clahe_image = self.transforms(polar_clahe_image)
