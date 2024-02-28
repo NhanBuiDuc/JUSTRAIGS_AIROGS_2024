@@ -163,7 +163,7 @@ def main():
             labels = np.concatenate(labels, axis=0)
 
             # Compute the difference in probabilities
-            score = logits[:, 1] - logits[:, 0]
+            score = abs(logits[:, 1] - logits[:, 0])
             # Compute the ROC curve
             fpr, tpr, thresholds = roc_curve(labels, score)
 
