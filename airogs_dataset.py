@@ -11,10 +11,11 @@ import os
 from PIL import Image
 from skimage.transform import warp_polar
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 from skimage.exposure import equalize_adapthist
 from cv2 import bitwise_not
 from utils import modify_dataframe
+import cv2
 
 
 def polar(image):
@@ -36,6 +37,7 @@ class Airogs(torchvision.datasets.VisionDataset):
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
+        self.clahe = cv2.createCLAHE(clipLimit=5)
         print("{} size: {}".format(split, len(self.df_files)))
 
     def __getitem__(self, index):
@@ -47,8 +49,9 @@ class Airogs(torchvision.datasets.VisionDataset):
                 self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
-            original_image = Image.open(image_path)
-
+            # original_image = Image.open(image_path)
+            original_image = cv2.imread(image_path)
+            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
         except FileNotFoundError:
             try:
                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -56,8 +59,11 @@ class Airogs(torchvision.datasets.VisionDataset):
                     self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
-                original_image = Image.open(image_path).convert(
-                    'RGB')  # Adjust as needed
+                # original_image = Image.open(image_path).convert(
+                #     'RGB')  # Adjust as needed
+                original_image = cv2.imread(image_path)
+                original_image = cv2.cvtColor(
+                    original_image, cv2.COLOR_BGR2RGB)
             except FileNotFoundError:
                 try:
                     # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -65,7 +71,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                         self.path, self.images_dir_name, file_name + ".jpeg")
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
-                    original_image = Image.open(image_path)
+                    # original_image = Image.open(image_path)
+                    original_image = cv2.imread(image_path)
+                    original_image = cv2.cvtColor(
+                        original_image, cv2.COLOR_BGR2RGB)
                 except FileNotFoundError:
                     try:
                         # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -73,7 +82,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                             self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
-                        original_image = Image.open(image_path)
+                        # original_image = Image.open(image_path)
+                        original_image = cv2.imread(image_path)
+                        original_image = cv2.cvtColor(
+                            original_image, cv2.COLOR_BGR2RGB)
                     except FileNotFoundError:
                         try:
                             # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -81,7 +93,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                                 self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
-                            original_image = Image.open(image_path)
+                            # original_image = Image.open(image_path)
+                            original_image = cv2.imread(image_path)
+                            original_image = cv2.cvtColor(
+                                original_image, cv2.COLOR_BGR2RGB)
                         except FileNotFoundError:
                             try:
                                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -89,8 +104,11 @@ class Airogs(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
-                                original_image = Image.open(image_path).convert(
-                                    'RGB')  # Adjust as needed
+                                # original_image = Image.open(image_path).convert(
+                                #     'RGB')  # Adjust as needed
+                                original_image = cv2.imread(image_path)
+                                original_image = cv2.cvtColor(
+                                    original_image, cv2.COLOR_BGR2RGB)
                             except FileNotFoundError:
                                 # Handle the case where both .jpg and .png files are not found
                                 print(
@@ -100,16 +118,18 @@ class Airogs(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
-        original_image = np.array(original_image, dtype=np.float64)
+        # original_image = np.array(original_image, dtype=np.float64)
         polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
-        clahe_image = equalize_adapthist(clahe_image)
+        # clahe_image = equalize_adapthist(clahe_image)
+        clahe_image = self.clahe.apply(clahe_image)
         clahe_image = (clahe_image*255).astype('uint8')
         clahe_image = Image.fromarray(clahe_image)
 
         polar_clahe_image = polar_image / 255.0
-        polar_clahe_image = equalize_adapthist(polar_clahe_image)
+        # polar_clahe_image = equalize_adapthist(polar_clahe_image)
+        polar_clahe_image = self.clahe.apply(polar_clahe_image)
         polar_clahe_image = (polar_clahe_image*255).astype('uint8')
         polar_clahe_image = Image.fromarray(polar_clahe_image)
 
