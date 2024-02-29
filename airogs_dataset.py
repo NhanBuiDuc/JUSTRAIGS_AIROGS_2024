@@ -37,7 +37,6 @@ class Airogs(torchvision.datasets.VisionDataset):
         self.transforms = transforms
         self.polar_transforms = polar_transforms
         self.apply_clahe = apply_clahe
-        self.clahe = cv2.createCLAHE(clipLimit=5)
         print("{} size: {}".format(split, len(self.df_files)))
 
     def __getitem__(self, index):
@@ -123,13 +122,14 @@ class Airogs(torchvision.datasets.VisionDataset):
 
         clahe_image = original_image / 255.0
         # clahe_image = equalize_adapthist(clahe_image)
-        clahe_image = self.clahe.apply(clahe_image)
+        clahe_image = cv2.createCLAHE(clipLimit=5).apply(clahe_image)
         clahe_image = (clahe_image*255).astype('uint8')
         clahe_image = Image.fromarray(clahe_image)
 
         polar_clahe_image = polar_image / 255.0
         # polar_clahe_image = equalize_adapthist(polar_clahe_image)
-        polar_clahe_image = self.clahe.apply(polar_clahe_image)
+        polar_clahe_image = cv2.createCLAHE(
+            clipLimit=5).apply(polar_clahe_image)
         polar_clahe_image = (polar_clahe_image*255).astype('uint8')
         polar_clahe_image = Image.fromarray(polar_clahe_image)
 
