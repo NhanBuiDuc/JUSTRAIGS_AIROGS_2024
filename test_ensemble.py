@@ -64,13 +64,6 @@ def main():
             transforms.ToTensor(),
         ])
 
-    train_dataset = Airogs(
-        path=data_dir,
-        images_dir_name=images_dir_name,
-        split="train",
-        transforms=transform,
-        polar_transforms=polar_transform
-    )
     val_dataset = Airogs(
         path=data_dir,
         images_dir_name=images_dir_name,
@@ -110,33 +103,16 @@ def main():
     criterion = CrossEntropyLoss(
         weight=torch.from_numpy(weight_referable).to(device))
 
-    if optimizer_name == "sgd":
-        optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
+    # if optimizer_name == "sgd":
+    #     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
 
-    if lr_step_period is None:
-        lr_step_period = math.inf
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_step_period)
+    # if lr_step_period is None:
+    #     lr_step_period = math.inf
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_step_period)
 
     with open(os.path.join(output_dir, "log.csv"), "a") as f:
-        f.write("Train Dataset size: {}".format(len(train_dataset)))
         f.write("Validation Dataset size: {}".format(len(val_dataset)))
 
-        epoch_resume = 0
-        best_f1 = 0.0
-        # try:
-        #     # Attempt to load checkpoint
-        #     checkpoint = torch.load(os.path.join(output_dir, "checkpoint.pt"))
-        #     model.load_state_dict(checkpoint['state_dict'])
-        #     optimizer.load_state_dict(checkpoint['opt_dict'])
-        #     scheduler.load_state_dict(checkpoint['scheduler_dict'])
-        #     epoch_resume = checkpoint["epoch"] + 1
-        #     best_f1 = checkpoint["best_f1"]
-        #     f.write("Resuming from epoch {}\n".format(epoch_resume))
-        #     f.flush()
-        # except FileNotFoundError:
-        #     f.write("Starting run from scratch\n")
-
-        # Train
         f.write("Resuming training\n")
         with torch.no_grad():
             model.eval()
