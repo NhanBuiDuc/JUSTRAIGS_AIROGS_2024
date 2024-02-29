@@ -11,9 +11,8 @@ import os
 from PIL import Image
 from skimage.transform import warp_polar
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
 from skimage.exposure import equalize_adapthist
-from cv2 import bitwise_not
 from utils import modify_dataframe
 import cv2
 
@@ -121,15 +120,12 @@ class Airogs(torchvision.datasets.VisionDataset):
         polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
-        # clahe_image = equalize_adapthist(clahe_image)
-        clahe_image = cv2.createCLAHE(clipLimit=5).apply(clahe_image)
+        clahe_image = equalize_adapthist(clahe_image)
         clahe_image = (clahe_image*255).astype('uint8')
         clahe_image = Image.fromarray(clahe_image)
 
         polar_clahe_image = polar_image / 255.0
-        # polar_clahe_image = equalize_adapthist(polar_clahe_image)
-        polar_clahe_image = cv2.createCLAHE(
-            clipLimit=5).apply(polar_clahe_image)
+        polar_clahe_image = equalize_adapthist(polar_clahe_image)
         polar_clahe_image = (polar_clahe_image*255).astype('uint8')
         polar_clahe_image = Image.fromarray(polar_clahe_image)
 
