@@ -64,13 +64,13 @@ def run():
         is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
             output, dim=1)
         is_referable_glaucoma_likelihood = float(
-            is_referable_glaucoma_likelihood.detach().cpu().numpy())
+            is_referable_glaucoma_likelihood.detach().cpu().numpy()[0])
         is_referable_glaucoma = float(
-            is_referable_glaucoma.detach().cpu().numpy())
+            is_referable_glaucoma.detach().cpu().numpy()[0])
         print("is_referable_glaucoma_likelihood: ",
               is_referable_glaucoma_likelihood)
         print("is_referable_glaucoma: ", is_referable_glaucoma)
-        if is_referable_glaucoma:
+        if is_referable_glaucoma > 0:
             features = {
                 k: random.choice([True, False])
                 for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()

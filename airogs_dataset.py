@@ -17,8 +17,12 @@ from utils import modify_dataframe
 import cv2
 
 
+# def polar(image):
+#     return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
+
+
 def polar(image):
-    return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
+    return warp_polar(image, radius=(max(image.shape) // 2), channel_axis=2)
 
 
 class Airogs(torchvision.datasets.VisionDataset):
