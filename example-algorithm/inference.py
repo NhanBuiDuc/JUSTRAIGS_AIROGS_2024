@@ -3,11 +3,19 @@ import random
 import numpy
 from PIL import Image
 from helper import DEFAULT_GLAUCOMATOUS_FEATURES, inference_tasks
+from gadnet import Gadnet
+import torch
 
 
 def run():
     _show_torch_cuda_info()
+    if torch.cuda.is_available():
+        device = torch.device("cuda:0")
+    else:
+        device = torch.device("cpu")
 
+    model = Gadnet(device)
+    model = model.to(device)
     for jpg_image_file_name, save_prediction in inference_tasks():
         # Do inference, possibly something better performant
         ...
@@ -17,7 +25,8 @@ def run():
         # For example: use Pillow to read the jpg file and convert it to a NumPY array:
         image = Image.open(jpg_image_file_name)
         numpy_array = numpy.array(image)
-
+        output = model(polar_image.to(device), clahe_image.to(device),
+                       polar_clahe_image.to(device))
         is_referable_glaucoma_likelihood = random.random()
         is_referable_glaucoma = is_referable_glaucoma_likelihood > 0.5
         if is_referable_glaucoma:
@@ -42,11 +51,14 @@ def _show_torch_cuda_info():
     import torch
 
     print("=+=" * 10)
-    print(f"Torch CUDA is available: {(available := torch.cuda.is_available())}")
+    print(
+        f"Torch CUDA is available: {(available := torch.cuda.is_available())}")
     if available:
         print(f"\tnumber of devices: {torch.cuda.device_count()}")
-        print(f"\tcurrent device: { (current_device := torch.cuda.current_device())}")
-        print(f"\tproperties: {torch.cuda.get_device_properties(current_device)}")
+        print(
+            f"\tcurrent device: { (current_device := torch.cuda.current_device())}")
+        print(
+            f"\tproperties: {torch.cuda.get_device_properties(current_device)}")
     print("=+=" * 10)
 
 

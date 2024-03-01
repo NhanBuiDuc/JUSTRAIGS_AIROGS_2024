@@ -47,9 +47,9 @@ class Airogs(torchvision.datasets.VisionDataset):
                 self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
-            # original_image = Image.open(image_path)
-            original_image = cv2.imread(image_path)
-            original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+            original_image = Image.open(image_path)
+            # original_image = cv2.imread(image_path)
+            # original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
         except FileNotFoundError:
             try:
                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -57,11 +57,11 @@ class Airogs(torchvision.datasets.VisionDataset):
                     self.path, self.images_dir_name, file_name + ".png")
                 # Replacing backslashes with forward slashes
                 image_path = image_path.replace("\\", "/")
-                # original_image = Image.open(image_path).convert(
-                #     'RGB')  # Adjust as needed
-                original_image = cv2.imread(image_path)
-                original_image = cv2.cvtColor(
-                    original_image, cv2.COLOR_BGR2RGB)
+                original_image = Image.open(image_path).convert(
+                    'RGB')  # Adjust as needed
+                # original_image = cv2.imread(image_path)
+                # original_image = cv2.cvtColor(
+                #     original_image, cv2.COLOR_BGR2RGB)
             except FileNotFoundError:
                 try:
                     # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -69,10 +69,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                         self.path, self.images_dir_name, file_name + ".jpeg")
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
-                    # original_image = Image.open(image_path)
-                    original_image = cv2.imread(image_path)
-                    original_image = cv2.cvtColor(
-                        original_image, cv2.COLOR_BGR2RGB)
+                    original_image = Image.open(image_path)
+                    # original_image = cv2.imread(image_path)
+                    # original_image = cv2.cvtColor(
+                    #     original_image, cv2.COLOR_BGR2RGB)
                 except FileNotFoundError:
                     try:
                         # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -80,10 +80,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                             self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
-                        # original_image = Image.open(image_path)
-                        original_image = cv2.imread(image_path)
-                        original_image = cv2.cvtColor(
-                            original_image, cv2.COLOR_BGR2RGB)
+                        original_image = Image.open(image_path)
+                        # original_image = cv2.imread(image_path)
+                        # original_image = cv2.cvtColor(
+                        #     original_image, cv2.COLOR_BGR2RGB)
                     except FileNotFoundError:
                         try:
                             # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -91,10 +91,10 @@ class Airogs(torchvision.datasets.VisionDataset):
                                 self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
-                            # original_image = Image.open(image_path)
-                            original_image = cv2.imread(image_path)
-                            original_image = cv2.cvtColor(
-                                original_image, cv2.COLOR_BGR2RGB)
+                            original_image = Image.open(image_path)
+                            # original_image = cv2.imread(image_path)
+                            # original_image = cv2.cvtColor(
+                            #     original_image, cv2.COLOR_BGR2RGB)
                         except FileNotFoundError:
                             try:
                                 # If the file with .jpg extension is not found, try to open the image with .png extension
@@ -102,11 +102,11 @@ class Airogs(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
-                                # original_image = Image.open(image_path).convert(
-                                #     'RGB')  # Adjust as needed
-                                original_image = cv2.imread(image_path)
-                                original_image = cv2.cvtColor(
-                                    original_image, cv2.COLOR_BGR2RGB)
+                                original_image = Image.open(image_path).convert(
+                                    'RGB')  # Adjust as needed
+                                # original_image = cv2.imread(image_path)
+                                # original_image = cv2.cvtColor(
+                                #     original_image, cv2.COLOR_BGR2RGB)
                             except FileNotFoundError:
                                 # Handle the case where both .jpg and .png files are not found
                                 print(
