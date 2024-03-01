@@ -9,6 +9,7 @@ import numpy as np
 from skimage.exposure import equalize_adapthist
 import torchvision
 import torchvision.transforms as transforms
+import torch.nn.functional as F
 
 
 def run():
@@ -31,10 +32,10 @@ def run():
         print(f"Running inference on {jpg_image_file_name}")
 
         # For example: use Pillow to read the jpg file and convert it to a NumPY array:
-        image = Image.open(jpg_image_file_name).convert(
+        original_image = Image.open(jpg_image_file_name).convert(
             'RGB')  # Adjust as needed
 
-        original_image = np.array(image)
+        original_image = np.array(original_image, dtype=np.float64)
         polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
@@ -53,10 +54,22 @@ def run():
         clahe_image = transform(clahe_image)
         polar_clahe_image = transform(polar_clahe_image)
 
+        polar_image = torch.unsqueeze(polar_image, axis=0)
+        clahe_image = torch.unsqueeze(clahe_image, axis=0)
+        polar_clahe_image = torch.unsqueeze(polar_clahe_image, axis=0)
         output = model(polar_image.to(device), clahe_image.to(device),
                        polar_clahe_image.to(device))
+        output = F.softmax(output, dim=1)
+        print("output:", output)
         is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
-            output, dim=0)
+            output, dim=1)
+        is_referable_glaucoma_likelihood = float(
+            is_referable_glaucoma_likelihood.detach().cpu().numpy())
+        is_referable_glaucoma = float(
+            is_referable_glaucoma.detach().cpu().numpy())
+        print("is_referable_glaucoma_likelihood: ",
+              is_referable_glaucoma_likelihood)
+        print("is_referable_glaucoma: ", is_referable_glaucoma)
         if is_referable_glaucoma:
             features = {
                 k: random.choice([True, False])
@@ -91,7 +104,7 @@ def _show_torch_cuda_info():
 
 
 def polar(image):
-    return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
+    return warp_polar(image, radius=(max(image.shape) // 2), channel_axis=2)
 
 
 if __name__ == "__main__":

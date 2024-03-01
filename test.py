@@ -12,11 +12,10 @@ from skimage.transform import warp_polar
 
 
 def polar(image):
-    return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
+    return warp_polar(image, radius=(max(image.shape) // 2), channel_axis=2)
 
 
-image = Image.open("ISIC_0034321.jpg").convert(
-    'RGB')  # Adjust as needed
+original_image = Image.open("ISIC_0034321.jpg")
 
-original_image = np.array(image)
+original_image = np.array(original_image, dtype=np.float64)
 polar_image = polar(original_image)
