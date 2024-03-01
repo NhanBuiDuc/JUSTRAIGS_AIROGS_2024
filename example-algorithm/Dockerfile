@@ -16,6 +16,7 @@ RUN python -m pip install \
 
 COPY --chown=user:user helper.py /opt/app
 COPY --chown=user:user inference.py /opt/app
-COPY --chown=user:user checkpoints /opt/app/check-point
+COPY --chown=user:user gadnet.py /opt/app
+COPY --chown=user:user checkpoints /opt/app/checkpoints
 
 ENTRYPOINT ["python", "inference.py"]

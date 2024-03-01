@@ -1,10 +1,14 @@
 import random
 
-import numpy
 from PIL import Image
 from helper import DEFAULT_GLAUCOMATOUS_FEATURES, inference_tasks
 from gadnet import Gadnet
 import torch
+from skimage.transform import warp_polar
+import numpy as np
+from skimage.exposure import equalize_adapthist
+import torchvision
+import torchvision.transforms as transforms
 
 
 def run():
@@ -13,7 +17,11 @@ def run():
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
-
+    resize = 256
+    transform = torchvision.transforms.Compose({
+        transforms.ToTensor(),
+        transforms.Resize((resize, resize))
+    })
     model = Gadnet(device)
     model = model.to(device)
     for jpg_image_file_name, save_prediction in inference_tasks():
@@ -23,12 +31,32 @@ def run():
         print(f"Running inference on {jpg_image_file_name}")
 
         # For example: use Pillow to read the jpg file and convert it to a NumPY array:
-        image = Image.open(jpg_image_file_name)
-        numpy_array = numpy.array(image)
+        image = Image.open(jpg_image_file_name).convert(
+            'RGB')  # Adjust as needed
+
+        original_image = np.array(image)
+        polar_image = polar(original_image)
+
+        clahe_image = original_image / 255.0
+        clahe_image = equalize_adapthist(clahe_image)
+        clahe_image = (clahe_image*255).astype('uint8')
+        clahe_image = Image.fromarray(clahe_image)
+
+        polar_clahe_image = polar_image / 255.0
+        polar_clahe_image = equalize_adapthist(polar_clahe_image)
+        polar_clahe_image = (polar_clahe_image*255).astype('uint8')
+        polar_clahe_image = Image.fromarray(polar_clahe_image)
+
+        assert (transforms != None)
+        polar_image = Image.fromarray(polar_image.astype("uint8"))
+        polar_image = transform(polar_image)
+        clahe_image = transform(clahe_image)
+        polar_clahe_image = transform(polar_clahe_image)
+
         output = model(polar_image.to(device), clahe_image.to(device),
                        polar_clahe_image.to(device))
-        is_referable_glaucoma_likelihood = random.random()
-        is_referable_glaucoma = is_referable_glaucoma_likelihood > 0.5
+        is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
+            output, dim=0)
         if is_referable_glaucoma:
             features = {
                 k: random.choice([True, False])
@@ -60,6 +88,10 @@ def _show_torch_cuda_info():
         print(
             f"\tproperties: {torch.cuda.get_device_properties(current_device)}")
     print("=+=" * 10)
+
+
+def polar(image):
+    return warp_polar(image, radius=(max(image.shape) // 2), multichannel=True)
 
 
 if __name__ == "__main__":

@@ -2,9 +2,9 @@ pillow
 SimpleITK
 imagecodecs
 numpy
-torch==2.1.2
-torchaudio==2.1.2
-torchmetrics==1.2.1
-torchvision==0.16.2
-scikit-image==0.20.0
-timm==0.9.12
+torch
+torchaudio
+torchmetrics
+torchvision
+scikit-image
+timm
