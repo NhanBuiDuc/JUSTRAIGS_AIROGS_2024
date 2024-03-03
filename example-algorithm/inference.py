@@ -10,6 +10,78 @@ from skimage.exposure import equalize_adapthist
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
+import timm
+
+
+def create_swin_transformer(variant, num_classes=10, pretrained=False):
+    """
+    Create a Swin Transformer model with the specified variant.
+
+    Parameters:
+    - variant (str): Swin Transformer variant name.
+    - num_classes (int): Number of classes for the final layer.
+    - pretrained (bool): If True, returns a model pre-trained on ImageNet.
+
+    Returns:
+    - model (nn.Module): Swin Transformer model.
+    """
+    model = timm.create_model(
+        variant, pretrained=pretrained, num_classes=num_classes)
+    return model
+
+
+def swin_tiny_patch4_window7_224(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_tiny_patch4_window7_224", num_classes, pretrained)
+
+
+def swin_small_patch4_window7_224(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_small_patch4_window7_224", num_classes, pretrained)
+
+
+def swin_base_patch4_window7_224(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_base_patch4_window7_224", num_classes, pretrained)
+
+
+def swin_base_patch4_window12_384(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_base_patch4_window12_384", num_classes, pretrained)
+
+
+def swin_large_patch4_window7_224(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_large_patch4_window7_224", num_classes, pretrained)
+
+
+def swin_large_patch4_window12_384(num_classes=10, pretrained=False):
+    return create_swin_transformer("swin_large_patch4_window12_384", num_classes, pretrained)
+
+
+def load_model(model_name, weight_path, device):
+    model_pool = {
+
+        # Swin Transformer Variants
+        'swin_tiny_patch4_window7_224': swin_tiny_patch4_window7_224,
+        'swin_small_patch4_window7_224': swin_small_patch4_window7_224,
+        'swin_base_patch4_window7_224': swin_base_patch4_window7_224,
+        'swin_base_patch4_window12_384': swin_base_patch4_window12_384,
+        'swin_large_patch4_window7_224': swin_large_patch4_window7_224,
+        'swin_large_patch4_window12_384': swin_large_patch4_window12_384,
+    }
+    """Load the specified model with pretrained weights."""
+    # Provide a dummy pth_url
+    model = model_pool[model_name](num_classes=10, pretrained=False)
+
+    # Load the checkpoint
+    checkpoint = torch.load(weight_path, map_location=device)
+
+    # Correctly extract the 'model_state_dict' from the checkpoint
+    if "model_state_dict" in checkpoint:
+        model.load_state_dict(checkpoint["model_state_dict"])
+    else:
+        # If the checkpoint structure is different, adjust accordingly
+        raise KeyError("Checkpoint does not contain 'model_state_dict'")
+
+    model.to(device)
+    model.eval()  # Set the model to evaluation mode
+    return model
 
 
 def run():
@@ -23,8 +95,17 @@ def run():
         transforms.ToTensor(),
         transforms.Resize((resize, resize))
     })
-    model = Gadnet(device)
-    model = model.to(device)
+    transform2 = torchvision.transforms.Compose({
+        transforms.ToTensor(),
+        transforms.Resize((224, 224))
+    })
+
+    binary_model = Gadnet(device)
+    binary_model = binary_model.to(device)
+    model_name = "swin_tiny_patch4_window7_224"
+    weight_path = f"checkpoints/{model_name}/best_hamming_loss_model.pth"
+    # Load the model with pretrained weights
+    multi_label_model = load_model(model_name, weight_path, device)
     for jpg_image_file_name, save_prediction in inference_tasks():
         # Do inference, possibly something better performant
         ...
@@ -34,8 +115,10 @@ def run():
         # For example: use Pillow to read the jpg file and convert it to a NumPY array:
         original_image = Image.open(jpg_image_file_name).convert(
             'RGB')  # Adjust as needed
-
+        multi_label_image = transform2(original_image)
+        multi_label_image = torch.unsqueeze(multi_label_image, axis=0)
         original_image = np.array(original_image, dtype=np.float64)
+
         polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
@@ -57,8 +140,8 @@ def run():
         polar_image = torch.unsqueeze(polar_image, axis=0)
         clahe_image = torch.unsqueeze(clahe_image, axis=0)
         polar_clahe_image = torch.unsqueeze(polar_clahe_image, axis=0)
-        output = model(polar_image.to(device), clahe_image.to(device),
-                       polar_clahe_image.to(device))
+        output = binary_model(polar_image.to(device), clahe_image.to(device),
+                              polar_clahe_image.to(device))
         output = F.softmax(output, dim=1)
         print("output:", output)
         is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
@@ -71,9 +154,14 @@ def run():
               is_referable_glaucoma_likelihood)
         print("is_referable_glaucoma: ", is_referable_glaucoma)
         if is_referable_glaucoma > 0:
+            multi_label_output = multi_label_model(
+                multi_label_image.to(device))
+            # Binary thresholding for predictions
+            pred_labels = (torch.sigmoid(multi_label_output) > 0.5).float()
             features = {
-                k: random.choice([True, False])
-                for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
+                # Convert tensor values to True/False
+                k: pred_labels[0, i].item() == 1
+                for i, (k, v) in enumerate(DEFAULT_GLAUCOMATOUS_FEATURES.items())
             }
         else:
             features = None
