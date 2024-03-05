@@ -87,6 +87,8 @@ def load_model(model_name, weight_path, device):
 
 def run():
     _show_torch_cuda_info()
+
+    print("In Run:")
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
@@ -172,7 +174,7 @@ def run():
         print("is_referable_glaucoma_likelihood: ",
               is_referable_glaucoma_likelihood)
         print("is_referable_glaucoma: ", is_referable_glaucoma)
-        if is_referable_glaucoma > 0:
+        if is_referable_glaucoma >= 1:
             multi_label_output = multi_label_model(
                 multi_label_image.to(device))
             # Binary thresholding for predictions
@@ -199,14 +201,17 @@ def run():
 
 
 def _show_torch_cuda_info():
-    import torch
+    print("IN _show_torch_cuda_info")
+    print("Current dir files:")
     current_dir = os.getcwd()
     print(current_dir)
     all_items = os.listdir(current_dir)
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-    all_items = os.listdir("./")
+
+    print("Root dir files:")
+    all_items = os.listdir("../../")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
