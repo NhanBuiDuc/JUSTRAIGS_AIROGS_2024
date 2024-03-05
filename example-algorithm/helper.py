@@ -127,18 +127,13 @@ def write_referable_glaucoma_decision(result):
     #     f.write(json.dumps(result))
     # print(result)
 
-    all_items = os.listdir("../../")
-    # Print each item (file or folder)
-    for item in all_items:
-        print(item)
+    # # Define the directory path
+    # dir_path = "output"
 
-    # Define the directory path
-    dir_path = "output"
-
-    # Check if the directory does not exist
-    if not os.path.exists(dir_path):
-        # Create the directory
-        os.makedirs(dir_path)
+    # # Check if the directory does not exist
+    # if not os.path.exists(dir_path):
+    #     # Create the directory
+    #     os.makedirs(dir_path)
 
     with open(f"./output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
@@ -148,32 +143,14 @@ def write_referable_glaucoma_decision(result):
     for item in all_items:
         print(item)
 
-
-def write_referable_glaucoma_decision_likelihood(result):
-    # # Define the directory path
-    # dir_path = "../../output"
-
-    # # Check if the directory does not exist
-    # if not os.path.exists(dir_path):
-    #     # Create the directory
-    #     os.makedirs(dir_path)
-
-    # with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
-    #     f.write(json.dumps(result))
-    # print(result)
-
-    all_items = os.listdir("../../")
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
 
-    # Define the directory path
-    dir_path = "output"
 
-    # Check if the directory does not exist
-    if not os.path.exists(dir_path):
-        # Create the directory
-        os.makedirs(dir_path)
+def write_referable_glaucoma_decision_likelihood(result):
+
     with open(f"./output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
         f.write(json.dumps(result))
     print(result)
@@ -181,37 +158,22 @@ def write_referable_glaucoma_decision_likelihood(result):
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-
-
-def write_glaucomatous_features(result):
-    # # Define the directory path
-    # dir_path = "../../output"
-
-    # # Check if the directory does not exist
-    # if not os.path.exists(dir_path):
-    #     # Create the directory
-    #     os.makedirs(dir_path)
-
-    # with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
-    #     f.write(json.dumps(result))
-    # print(result)
-
-    all_items = os.listdir("../../")
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
 
-    # Define the directory path
-    dir_path = "output"
 
-    # Check if the directory does not exist
-    if not os.path.exists(dir_path):
-        # Create the directory
-        os.makedirs(dir_path)
+def write_glaucomatous_features(result):
+
     with open(f"./output/stacked-referable-glaucomatous-features.json", "w") as f:
         f.write(json.dumps(result))
     print(result)
     all_items = os.listdir("./")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
