@@ -11,6 +11,7 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 import timm
+import os
 
 
 def create_swin_transformer(variant, num_classes=10, pretrained=False):
@@ -103,9 +104,27 @@ def run():
     binary_model = Gadnet(device)
     binary_model = binary_model.to(device)
     model_name = "swin_tiny_patch4_window7_224"
-    weight_path = f"checkpoints/{model_name}/best_hamming_loss_model.pth"
+    multi_label_model = swin_tiny_patch4_window7_224(
+        num_classes=10, pretrained=False)
+    # Load the checkpoint
+    current_dir = os.getcwd()
+    weight_path = ("./checkpoints/best_hamming_loss_model.pth")
+    checkpoint = torch.load(weight_path, map_location=device)
+    if "model_state_dict" in checkpoint:
+        multi_label_model.load_state_dict(checkpoint["model_state_dict"])
+    else:
+        # If the checkpoint structure is different, adjust accordingly
+        raise KeyError("Checkpoint does not contain 'model_state_dict'")
+
+    multi_label_model.to(device)
+    multi_label_model.eval()  # Set the model to evaluation mode
+
+    all_items = os.listdir(current_dir)
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
     # Load the model with pretrained weights
-    multi_label_model = load_model(model_name, weight_path, device)
+    # multi_label_model = load_model(model_name, weight_path, device)
     for jpg_image_file_name, save_prediction in inference_tasks():
         # Do inference, possibly something better performant
         ...
@@ -163,9 +182,12 @@ def run():
                 k: pred_labels[0, i].item() == 1
                 for i, (k, v) in enumerate(DEFAULT_GLAUCOMATOUS_FEATURES.items())
             }
+
         else:
-            features = None
-        ...
+            features = {
+                k: None
+                for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
+            }
 
         # Finally, save the answer
         save_prediction(
@@ -178,7 +200,22 @@ def run():
 
 def _show_torch_cuda_info():
     import torch
-
+    current_dir = os.getcwd()
+    print(current_dir)
+    all_items = os.listdir(current_dir)
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+    all_items = os.listdir("./")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+    current_dir = ("checkpoints")
+    print(current_dir)
+    all_items = os.listdir(current_dir)
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
     print("=+=" * 10)
     print(
         f"Torch CUDA is available: {(available := torch.cuda.is_available())}")

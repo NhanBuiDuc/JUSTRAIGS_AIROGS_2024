@@ -5,6 +5,7 @@ from pprint import pprint
 
 import SimpleITK as sitk
 from PIL import Image
+import os
 
 DEFAULT_GLAUCOMATOUS_FEATURES = {
     "appearance neuroretinal rim superiorly": None,
@@ -36,9 +37,11 @@ def inference_tasks():
             glaucomatous_features=None,
     ):
         is_referable_glaucoma_stacked.append(is_referable_glaucoma)
-        is_referable_glaucoma_likelihood_stacked.append(likelihood_referable_glaucoma)
+        is_referable_glaucoma_likelihood_stacked.append(
+            likelihood_referable_glaucoma)
         if glaucomatous_features is not None:
-            glaucomatous_features_stacked.append({**DEFAULT_GLAUCOMATOUS_FEATURES, **glaucomatous_features})
+            glaucomatous_features_stacked.append(
+                {**DEFAULT_GLAUCOMATOUS_FEATURES, **glaucomatous_features})
         else:
             glaucomatous_features_stacked.append(DEFAULT_GLAUCOMATOUS_FEATURES)
 
@@ -112,15 +115,91 @@ def stack_inference(stack, callback):
 
 
 def write_referable_glaucoma_decision(result):
-    with open(f"/output/multiple-referable-glaucoma-binary.json", "w") as f:
+    # Define the directory path
+    dir_path = "../../output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+
+    with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
+    print(result)
+
+    all_items = os.listdir("../../")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+
+    # Define the directory path
+    dir_path = "output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+
+    with open(f"./output/multiple-referable-glaucoma-binary.json", "w") as f:
+        f.write(json.dumps(result))
+    print(result)
 
 
 def write_referable_glaucoma_decision_likelihood(result):
-    with open(f"/output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
+    # Define the directory path
+    dir_path = "../../output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+
+    with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
+    print(result)
+
+    all_items = os.listdir("../../")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+
+    # Define the directory path
+    dir_path = "output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+    with open(f"./output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
+        f.write(json.dumps(result))
+    print(result)
 
 
 def write_glaucomatous_features(result):
-    with open(f"/output/stacked-referable-glaucomatous-features.json", "w") as f:
+    # Define the directory path
+    dir_path = "../../output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+
+    with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
+    print(result)
+
+    all_items = os.listdir("../../")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
+
+    # Define the directory path
+    dir_path = "output"
+
+    # Check if the directory does not exist
+    if not os.path.exists(dir_path):
+        # Create the directory
+        os.makedirs(dir_path)
+    with open(f"./output/stacked-referable-glaucomatous-features.json", "w") as f:
+        f.write(json.dumps(result))
+    print(result)

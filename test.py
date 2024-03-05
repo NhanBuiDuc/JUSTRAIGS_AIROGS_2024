@@ -10,6 +10,8 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 import timm
+import json
+import os
 
 
 def create_swin_transformer(variant, num_classes=10, pretrained=False):
@@ -127,6 +129,27 @@ features = {
     k: pred_labels[0, i].item() == 1  # Convert tensor values to True/False
     for i, (k, v) in enumerate(DEFAULT_GLAUCOMATOUS_FEATURES.items())
 }
+features = {
+    k: random.choice([True, False])
+    for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
+}
+features = {
+    k: None
+    for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
+}
 
+# Define the directory path
+dir_path = "output"
+
+# Check if the directory does not exist
+if not os.path.exists(dir_path):
+    # Create the directory
+    os.makedirs(dir_path)
+
+output_dir = f"./output/multiple-referable-glaucoma-binary.json"
+# if not os.path.exists(output_dir):
+#     json.dump([])
+with open(output_dir, "w") as f:
+    f.write(json.dumps(features))
 # Print the generated features
 print(features)
