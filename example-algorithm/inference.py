@@ -103,9 +103,11 @@ def run():
         transforms.Resize((224, 224))
     })
 
+    print("Load binary model")
     binary_model = Gadnet(device)
     binary_model = binary_model.to(device)
     model_name = "swin_tiny_patch4_window7_224"
+    print("Load ", model_name, " model")
     multi_label_model = swin_tiny_patch4_window7_224(
         num_classes=10, pretrained=False)
     # Load the checkpoint
@@ -129,7 +131,6 @@ def run():
     # multi_label_model = load_model(model_name, weight_path, device)
     for jpg_image_file_name, save_prediction in inference_tasks():
         # Do inference, possibly something better performant
-        ...
 
         print(f"Running inference on {jpg_image_file_name}")
 

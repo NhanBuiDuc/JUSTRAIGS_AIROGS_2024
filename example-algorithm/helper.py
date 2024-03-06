@@ -47,8 +47,10 @@ def inference_tasks():
 
     for file_path in input_files:
         if file_path.suffix == ".mha":  # A single image
+            print("Load .mha file")
             yield from single_file_inference(image_file=file_path, callback=save_prediction)
         elif file_path.suffix == ".tiff":  # A stack of images
+            print("Load .tiff file")
             yield from stack_inference(stack=file_path, callback=save_prediction)
 
     write_referable_glaucoma_decision(is_referable_glaucoma_stacked)
@@ -107,10 +109,12 @@ def stack_inference(stack, callback):
                 de_stacked_images.append(output_path)
 
                 print(f"De-Stacked {output_path}")
-
+        print(de_stacked_images)
         # Loop over the images, and generate the actual tasks
         for index, image in enumerate(de_stacked_images):
             # Call back that saves the result
+            print("Loaded image: ", image)
+            print(image)
             yield image, callback
 
 
