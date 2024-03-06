@@ -19,6 +19,6 @@ COPY --chown=user:user inference.py /opt/app
 COPY --chown=user:user gadnet.py /opt/app
 COPY --chown=user:user checkpoints /opt/app/checkpoints
 # Create the output directory
-RUN mkdir /opt/app/output && chown user:user /opt/app/output
+COPY --chown==user:user output /opt/app/output
 
 ENTRYPOINT ["python", "inference.py"]
