@@ -209,13 +209,14 @@ def _show_torch_cuda_info():
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-
     print("Root dir files:")
-    all_items = os.listdir("../../")
+    all_items = os.listdir(".")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-    current_dir = ("checkpoints")
+
+    print("App dir files:")
+    current_dir = ("app")
     print(current_dir)
     all_items = os.listdir(current_dir)
     # Print each item (file or folder)
