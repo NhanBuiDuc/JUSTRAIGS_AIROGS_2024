@@ -5,8 +5,8 @@ AIROGS_20224/*
 AIROGS_20224/fold_split_images/*
 AIROGS_20224/preprocessed_images/*
 AIROGS_20224/train/*
-output/*
-output/
+# output/*
+# output/
 wandb/*
 ./AIROGS_2024/*
 ./AIROGS_2024/images/*
