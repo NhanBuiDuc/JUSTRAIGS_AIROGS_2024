@@ -14,12 +14,12 @@ RUN python -m pip install \
     --no-color \
     --requirement requirements.txt
 
-COPY --chown=user:user helper.py /opt/app
-COPY --chown=user:user inference.py /opt/app
-COPY --chown=user:user gadnet.py /opt/app
-COPY --chown=user:user checkpoints /opt/app/checkpoints
+COPY --chown=user:user helper.py /app
+COPY --chown=user:user inference.py /app
+COPY --chown=user:user gadnet.py /app
+COPY --chown=user:user checkpoints /app/checkpoints
 # Create the output directory
-COPY --chown=user:user output /opt/app/output
+COPY --chown=user:user output /app/output
 
 WORKDIR .
 
