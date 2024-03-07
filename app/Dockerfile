@@ -21,6 +21,6 @@ COPY --chown=user:user checkpoints /app/checkpoints
 # Create the output directory
 COPY --chown=user:user output /app/output
 
-WORKDIR .
+WORKDIR ..
 
-ENTRYPOINT ["python", "inference.py"]
+ENTRYPOINT ["python", "app/inference.py"]
