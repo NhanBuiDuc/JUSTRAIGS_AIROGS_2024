@@ -112,7 +112,7 @@ def run():
         num_classes=10, pretrained=False)
     # Load the checkpoint
     current_dir = os.getcwd()
-    weight_path = ("./checkpoints/best_hamming_loss_model.pth")
+    weight_path = ("./app/checkpoints/best_hamming_loss_model.pth")
     checkpoint = torch.load(weight_path, map_location=device)
     if "model_state_dict" in checkpoint:
         multi_label_model.load_state_dict(checkpoint["model_state_dict"])
@@ -140,7 +140,6 @@ def run():
         multi_label_image = transform2(original_image)
         multi_label_image = torch.unsqueeze(multi_label_image, axis=0)
         original_image = np.array(original_image, dtype=np.float64)
-
         polar_image = polar(original_image)
 
         clahe_image = original_image / 255.0
@@ -175,7 +174,7 @@ def run():
         print("is_referable_glaucoma_likelihood: ",
               is_referable_glaucoma_likelihood)
         print("is_referable_glaucoma: ", is_referable_glaucoma)
-        if is_referable_glaucoma >= 1:
+        if is_referable_glaucoma > 0:
             multi_label_output = multi_label_model(
                 multi_label_image.to(device))
             # Binary thresholding for predictions

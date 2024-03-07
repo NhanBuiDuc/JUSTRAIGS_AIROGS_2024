@@ -6,9 +6,9 @@ ENV PYTHONUNBUFFERED 1
 RUN adduser --system --group user
 USER user
 
-WORKDIR /opt/app
+WORKDIR /app
 
-COPY --chown=user:user requirements.txt /opt/app
+COPY --chown=user:user requirements.txt /app
 
 RUN python -m pip install \
     --no-color \
@@ -21,4 +21,6 @@ COPY --chown=user:user checkpoints /opt/app/checkpoints
 # Create the output directory
 COPY --chown=user:user output /opt/app/output
 
-ENTRYPOINT ["python", "inference.py"]
+WORKDIR .
+
+ENTRYPOINT ["python", "app/inference.py"]
