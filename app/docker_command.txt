@@ -4,3 +4,4 @@ docker build --tag app .; `
     --volume ${PWD}\test\input:/input `
     --volume ${PWD}\test\output:/output `
     app
+docker save example-algorithm | gzip -c > example-algorithm.tar.gz

@@ -23,4 +23,4 @@ COPY --chown=user:user output /app/output
 
 WORKDIR .
 
-ENTRYPOINT ["python", "app/inference.py"]
+ENTRYPOINT ["python", "inference.py"]
