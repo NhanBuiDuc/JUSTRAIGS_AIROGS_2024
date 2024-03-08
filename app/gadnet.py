@@ -13,17 +13,17 @@ class Gadnet(nn.Module):
         # original
         self.model_0 = timm.create_model('efficientnet_b0', num_classes=2)
         self.model_0.load_state_dict(torch.load(
-            'app/checkpoints/airogs_1.pt')['state_dict'])
+            'checkpoints/airogs_1.pt')['state_dict'])
         self.model_0.to(device)
         # polar
         self.model_1 = timm.create_model('efficientnet_b0', num_classes=2)
         self.model_1.load_state_dict(torch.load(
-            'app/checkpoints/airogs_2.pt')['state_dict'])
+            'checkpoints/airogs_2.pt')['state_dict'])
         self.model_0.to(device)
         # cropped
         self.model_2 = timm.create_model('efficientnet_b0', num_classes=2)
         self.model_2.load_state_dict(torch.load(
-            'app/checkpoints/airogs_3.pt')['state_dict'])
+            'checkpoints/airogs_3.pt')['state_dict'])
         self.model_0.to(device)
         self.w_1 = 2
         self.w_2 = .5
