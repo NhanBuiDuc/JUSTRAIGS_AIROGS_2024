@@ -22,7 +22,7 @@ DEFAULT_GLAUCOMATOUS_FEATURES = {
 
 
 def inference_tasks():
-    input_files = [x for x in Path("../input").rglob("*") if x.is_file()]
+    input_files = [x for x in Path("./input").rglob("*") if x.is_file()]
 
     print("Input Files:")
     pprint(input_files)
