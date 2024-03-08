@@ -12,7 +12,7 @@ COPY --chown=user:user requirements.txt /app
 
 RUN python -m pip install \
     --no-color \
-    --requirement requirements.txt
+    --requirement app/requirements.txt
 
 COPY --chown=user:user helper.py ./
 COPY --chown=user:user inference.py ./
