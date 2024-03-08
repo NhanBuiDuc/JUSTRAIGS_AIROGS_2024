@@ -112,7 +112,7 @@ def run():
         num_classes=10, pretrained=False)
     # Load the checkpoint
     current_dir = os.getcwd()
-    weight_path = ("./app/checkpoints/best_hamming_loss_model.pth")
+    weight_path = ("checkpoints/best_hamming_loss_model.pth")
     checkpoint = torch.load(weight_path, map_location=device)
     if "model_state_dict" in checkpoint:
         multi_label_model.load_state_dict(checkpoint["model_state_dict"])
@@ -215,13 +215,6 @@ def _show_torch_cuda_info():
     for item in all_items:
         print(item)
 
-    print("App dir files:")
-    current_dir = ("app")
-    print(current_dir)
-    all_items = os.listdir(current_dir)
-    # Print each item (file or folder)
-    for item in all_items:
-        print(item)
     print("=+=" * 10)
     print(
         f"Torch CUDA is available: {(available := torch.cuda.is_available())}")
