@@ -12,6 +12,7 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 import timm
 import os
+import PIL
 
 
 def create_swin_transformer(variant, num_classes=10, pretrained=False):
@@ -87,7 +88,7 @@ def load_model(model_name, weight_path, device):
 
 def run():
     _show_torch_cuda_info()
-
+    PIL.Image.MAX_IMAGE_PIXELS = 6210645355
     print("In Run:")
     if torch.cuda.is_available():
         device = torch.device("cuda:0")

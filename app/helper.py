@@ -22,7 +22,7 @@ DEFAULT_GLAUCOMATOUS_FEATURES = {
 
 
 def inference_tasks():
-    input_files = [x for x in Path("./input").rglob("*") if x.is_file()]
+    input_files = [x for x in Path("/input").rglob("*") if x.is_file()]
 
     print("Input Files:")
     pprint(input_files)
@@ -144,6 +144,7 @@ def write_referable_glaucoma_decision(result):
 
     with open(f"output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
+        print("write multiple-referable-glaucoma-binary.json")
     print("multiple-referable: ", result)
     all_items = os.listdir("./")
     # Print each item (file or folder)
@@ -166,8 +167,9 @@ def write_referable_glaucoma_decision_likelihood(result):
     #     os.makedirs(dir_path)
     with open(f"output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
         f.write(json.dumps(result))
+        print("write multiple-referable-glaucoma-likelihoods.json")
     print(result)
-    all_items = os.listdir("./")
+    all_items = os.listdir("../")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
@@ -187,8 +189,9 @@ def write_glaucomatous_features(result):
     #     os.makedirs(dir_path)
     with open(f"output/stacked-referable-glaucomatous-features.json", "w") as f:
         f.write(json.dumps(result))
+        print("write stacked-referable-glaucomatous-features.json")
     print(result)
-    all_items = os.listdir("./")
+    all_items = os.listdir("../")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
