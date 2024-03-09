@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 RUN adduser --system --group user
 USER user
 
-# WORKDIR .
+WORKDIR ..
 
 COPY --chown=user:user requirements.txt ./
 
