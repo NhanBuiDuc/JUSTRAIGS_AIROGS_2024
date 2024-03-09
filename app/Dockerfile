@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 RUN adduser --system --group user
 USER user
 
-WORKDIR .
+# WORKDIR .
 
 COPY --chown=user:user requirements.txt ./
 
@@ -21,6 +21,6 @@ COPY --chown=user:user checkpoints ./checkpoints
 # Create the output directory
 # COPY --chown=user:user output /app/output
 
-WORKDIR ..
+# WORKDIR ..
 
 ENTRYPOINT ["python", "inference.py"]
