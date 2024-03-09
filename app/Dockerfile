@@ -8,7 +8,7 @@ USER user
 
 WORKDIR /opt/app
 
-COPY --chown=user:user requirements.txt opt/app
+COPY --chown=user:user requirements.txt /opt/app
 
 RUN python -m pip install \
     --no-color \
