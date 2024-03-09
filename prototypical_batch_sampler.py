@@ -37,12 +37,14 @@ class PrototypicalBatchSampler(object):
         # for every class c, fill the relative row with the indices samples belonging to c
         # in numel_per_class we store the number of samples for each class/row
         self.idxs = range(len(self.labels))
-        self.indexes = np.empty((len(self.classes), max(self.counts)), dtype=int) * np.nan
+        self.indexes = np.empty(
+            (len(self.classes), max(self.counts)), dtype=int) * np.nan
         self.indexes = torch.Tensor(self.indexes)
         self.numel_per_class = torch.zeros_like(self.classes)
         for idx, label in enumerate(self.labels):
             label_idx = np.argwhere(self.classes == label).item()
-            self.indexes[label_idx, np.where(np.isnan(self.indexes[label_idx]))[0][0]] = idx
+            self.indexes[label_idx, np.where(
+                np.isnan(self.indexes[label_idx]))[0][0]] = idx
             self.numel_per_class[label_idx] += 1
 
     def __iter__(self):
@@ -59,8 +61,10 @@ class PrototypicalBatchSampler(object):
             for i, c in enumerate(self.classes[c_idxs]):
                 s = slice(i * spc, (i + 1) * spc)
                 # FIXME when torch.argwhere will exists
-                label_idx = torch.arange(len(self.classes)).long()[self.classes == c].item()
-                sample_idxs = torch.randperm(self.numel_per_class[label_idx])[:spc]
+                label_idx = torch.arange(len(self.classes)).long()[
+                    self.classes == c].item()
+                sample_idxs = torch.randperm(
+                    self.numel_per_class[label_idx])[:spc]
                 batch[s] = self.indexes[label_idx][sample_idxs]
             batch = batch[torch.randperm(len(batch))]
             yield batch

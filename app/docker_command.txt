@@ -5,3 +5,13 @@ docker build --tag app .; `
     --volume ${PWD}\test\output:/output `
     app
 docker save app | gzip -c > app.tar.gz
+
+$ cd ./app
+$ docker build --tag app . && \
+    rm -f test/output/* && \
+    docker run --rm --gpus all \
+    --volume $(pwd)/test/input:/input \
+    --volume $(pwd)/test/output:/output \
+    app
+
+docker save app | gzip -c > app.tar.gz

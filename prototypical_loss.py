@@ -8,6 +8,7 @@ class PrototypicalLoss(Module):
     '''
     Loss class deriving from Module for the prototypical loss function defined below
     '''
+
     def __init__(self, n_support):
         super(PrototypicalLoss, self).__init__()
         self.n_support = n_support
@@ -66,9 +67,11 @@ def prototypical_loss(input, target, n_support):
 
     support_idxs = list(map(supp_idxs, classes))
 
-    prototypes = torch.stack([input_cpu[idx_list].mean(0) for idx_list in support_idxs])
+    prototypes = torch.stack([input_cpu[idx_list].mean(0)
+                             for idx_list in support_idxs])
     # FIXME when torch will support where as np
-    query_idxs = torch.stack(list(map(lambda c: target_cpu.eq(c).nonzero()[n_support:], classes))).view(-1)
+    query_idxs = torch.stack(
+        list(map(lambda c: target_cpu.eq(c).nonzero()[n_support:], classes))).view(-1)
 
     query_samples = input.to('cpu')[query_idxs]
     dists = euclidean_dist(query_samples, prototypes)

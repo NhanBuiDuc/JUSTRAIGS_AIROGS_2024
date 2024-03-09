@@ -210,7 +210,7 @@ def _show_torch_cuda_info():
     for item in all_items:
         print(item)
     print("Root dir files:")
-    all_items = os.listdir(".")
+    all_items = os.listdir("..")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
