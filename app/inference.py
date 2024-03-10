@@ -175,7 +175,11 @@ def run():
         print("is_referable_glaucoma_likelihood: ",
               is_referable_glaucoma_likelihood)
         print("is_referable_glaucoma: ", is_referable_glaucoma)
-        if is_referable_glaucoma > 0:
+        if is_referable_glaucoma == 0.0:
+            is_referable_glaucoma = False
+        else:
+            is_referable_glaucoma = True
+        if is_referable_glaucoma:
             multi_label_output = multi_label_model(
                 multi_label_image.to(device))
             # Binary thresholding for predictions
