@@ -6,9 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.nn import CrossEntropyLoss
 from tqdm import tqdm
-from torchvision.models import resnet18
 from torch.utils.data import DataLoader
-from skimage.io import imread
 import sklearn
 from sklearn import metrics
 from sklearn.metrics import f1_score
@@ -19,8 +17,6 @@ import torchvision.transforms as transforms
 from PIL import Image
 import timm
 from airogs_dataset import Airogs
-import wandb
-from gadnet import Gadnet
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 import torch.nn.functional as F
 from protonet import ProtoNet
