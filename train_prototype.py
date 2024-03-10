@@ -95,10 +95,10 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
 
-    model = ProtoNet(x_dim=1, hid_dim=64, z_dim=65)
+    model = ProtoNet(x_dim=3, hid_dim=64, z_dim=65)
     model = model.to(device)
 
-    criterion = PrototypicalLoss(100)
+    criterion = PrototypicalLoss(1)
 
     # if optimizer_name == "sgd":
     #     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
