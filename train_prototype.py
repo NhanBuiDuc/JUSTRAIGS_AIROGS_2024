@@ -120,8 +120,7 @@ def main():
             loader = val_loader
             for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
                 labels.append(target.detach().cpu().numpy())
-                output = model(polar_image.to(device), clahe_image.to(device),
-                               polar_clahe_image.to(device))
+                output = model(polar_image.to(device))
                 output = F.softmax(output, dim=0)
                 # _, batch_prediction = torch.max(output, dim=1)
                 # predictions.append(batch_prediction.detach().cpu().numpy())
