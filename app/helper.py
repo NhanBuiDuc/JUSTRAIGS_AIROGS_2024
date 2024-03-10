@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 from pprint import pprint
 
-import SimpleITK as sitk
+from SimpleITK import SimpleITK as sitk
 from PIL import Image
 import os
 
