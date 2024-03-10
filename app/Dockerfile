@@ -18,8 +18,8 @@ COPY --chown=user:user helper.py /opt/app
 COPY --chown=user:user inference.py /opt/app
 COPY --chown=user:user gadnet.py /opt/app
 COPY --chown=user:user checkpoints /opt/app/checkpoints
-# Create the output directory
-COPY --chown=user:user output /opt/app/output
+# # Create the output directory
+# COPY --chown=user:user output /opt/app/output
 
 # WORKDIR ..
 
