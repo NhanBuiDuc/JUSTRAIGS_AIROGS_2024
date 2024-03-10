@@ -61,6 +61,13 @@ def inference_tasks():
 
 
 def single_file_inference(image_file, callback):
+    import SimpleITK
+    try:
+        import SimpleITK
+        print(f"{SimpleITK} is installed.")
+    except ImportError:
+        print(f"{SimpleITK} is not installed.")
+
     with tempfile.TemporaryDirectory() as temp_dir:
         image = SimpleITK.ReadImage(image_file)
 
