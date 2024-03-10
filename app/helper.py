@@ -6,7 +6,7 @@ from pprint import pprint
 import SimpleITK
 from PIL import Image
 import os
-
+import subprocess
 DEFAULT_GLAUCOMATOUS_FEATURES = {
     "appearance neuroretinal rim superiorly": None,
     "appearance neuroretinal rim inferiorly": None,
@@ -24,6 +24,8 @@ DEFAULT_GLAUCOMATOUS_FEATURES = {
 def inference_tasks():
     input_files = [x for x in Path("/input").rglob("*") if x.is_file()]
 
+    # Run chown command to change ownership
+    subprocess.run(["chown", "user:user", "/opt/app/output"])
     print("Input Files:")
     pprint(input_files)
 
