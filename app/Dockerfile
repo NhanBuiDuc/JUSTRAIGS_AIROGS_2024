@@ -4,7 +4,7 @@ FROM --platform=linux/amd64  pytorch/pytorch
 ENV PYTHONUNBUFFERED 1
 
 RUN adduser --system --group user
-USER user
+USER root
 
 WORKDIR /opt/app
 
@@ -22,7 +22,7 @@ COPY --chown=user:user checkpoints /opt/app/checkpoints
 # # Create the output directory and set appropriate permissions
 # USER root
 # RUN mkdir /opt/app/output && chown user:user /opt/app/output
-# USER user
+USER user
 
 # WORKDIR ..
 
