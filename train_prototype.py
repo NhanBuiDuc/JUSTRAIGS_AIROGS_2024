@@ -98,7 +98,7 @@ def main():
     model = ProtoNet(x_dim=3, hid_dim=64, z_dim=65)
     model = model.to(device)
 
-    criterion = PrototypicalLoss(1)
+    criterion = PrototypicalLoss(100)
 
     # if optimizer_name == "sgd":
     #     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
