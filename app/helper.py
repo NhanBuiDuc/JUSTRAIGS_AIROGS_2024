@@ -150,7 +150,8 @@ def write_referable_glaucoma_decision(result):
     # if not os.path.exists(dir_path):
     #     # Create the directory
     #     os.makedirs(dir_path)
-
+    subprocess.run(["chown", "user:user", "/opt/app/output"])
+    subprocess.run(["chown", "user:user", "/output"])
     with open(f"/output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
         print("write multiple-referable-glaucoma-binary.json")
@@ -170,10 +171,8 @@ def write_referable_glaucoma_decision_likelihood(result):
     print("multiple-referable-glaucoma-likelihoods: ", result)
     # dir_path = "output"
 
-    # # Check if the directory does not exist
-    # if not os.path.exists(dir_path):
-    #     # Create the directory
-    #     os.makedirs(dir_path)
+    subprocess.run(["chown", "user:user", "/opt/app/output"])
+    subprocess.run(["chown", "user:user", "/output"])
     with open(f"/output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
         f.write(json.dumps(result))
         print("write multiple-referable-glaucoma-likelihoods.json")
@@ -190,12 +189,8 @@ def write_referable_glaucoma_decision_likelihood(result):
 
 def write_glaucomatous_features(result):
     print("stacked-referable-glaucomatous-features: ", result)
-    # dir_path = "output"
-
-    # # Check if the directory does not exist
-    # if not os.path.exists(dir_path):
-    #     # Create the directory
-    #     os.makedirs(dir_path)
+    subprocess.run(["chown", "user:user", "/opt/app/output"])
+    subprocess.run(["chown", "user:user", "/output"])
     with open(f"/output/stacked-referable-glaucomatous-features.json", "w") as f:
         f.write(json.dumps(result))
         print("write stacked-referable-glaucomatous-features.json")
