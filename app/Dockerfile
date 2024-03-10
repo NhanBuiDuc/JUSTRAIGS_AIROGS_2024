@@ -4,7 +4,7 @@ FROM --platform=linux/amd64  pytorch/pytorch
 ENV PYTHONUNBUFFERED 1
 
 RUN adduser --system --group user
-USER root
+# USER root
 
 WORKDIR /opt/app
 

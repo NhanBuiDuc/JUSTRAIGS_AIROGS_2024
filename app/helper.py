@@ -155,16 +155,25 @@ def write_referable_glaucoma_decision(result):
     with open(f"/output/multiple-referable-glaucoma-binary.json", "w") as f:
         f.write(json.dumps(result))
         print("write multiple-referable-glaucoma-binary.json")
+    try:
+        with open(f"../../output/multiple-referable-glaucoma-binary.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write multiple-referable-glaucoma-binary.json")
+    except:
+        with open(f"output/multiple-referable-glaucoma-binary.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write multiple-referable-glaucoma-binary.json")
     print("multiple-referable: ", result)
-    all_items = os.listdir("./")
+    print("../../output")
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-
-    # all_items = os.listdir("../../output")
-    # # Print each item (file or folder)
-    # for item in all_items:
-    #     print(item)
+    print("/output")
+    all_items = os.listdir("/output")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
 
 
 def write_referable_glaucoma_decision_likelihood(result):
@@ -176,15 +185,25 @@ def write_referable_glaucoma_decision_likelihood(result):
     with open(f"/output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
         f.write(json.dumps(result))
         print("write multiple-referable-glaucoma-likelihoods.json")
+    try:
+        with open(f"../../output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write multiple-referable-glaucoma-likelihoods.json")
+    except:
+        with open(f"output/multiple-referable-glaucoma-likelihoods.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write multiple-referable-glaucoma-likelihoods.json")
     print(result)
-    all_items = os.listdir("../")
+    print("../../output")
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-    # all_items = os.listdir("../../output")
-    # # Print each item (file or folder)
-    # for item in all_items:
-    #     print(item)
+    print("/output")
+    all_items = os.listdir("/output")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
 
 
 def write_glaucomatous_features(result):
@@ -194,12 +213,22 @@ def write_glaucomatous_features(result):
     with open(f"/output/stacked-referable-glaucomatous-features.json", "w") as f:
         f.write(json.dumps(result))
         print("write stacked-referable-glaucomatous-features.json")
+    try:
+        with open(f"../../output/stacked-referable-glaucomatous-features.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write stacked-referable-glaucomatous-features.json")
+    except:
+        with open(f"output/stacked-referable-glaucomatous-features.json", "w") as f:
+            f.write(json.dumps(result))
+            print("write stacked-referable-glaucomatous-features.json")
     print(result)
-    all_items = os.listdir("../")
+    print("../../output")
+    all_items = os.listdir("../../output")
     # Print each item (file or folder)
     for item in all_items:
         print(item)
-    # all_items = os.listdir("../../output")
-    # # Print each item (file or folder)
-    # for item in all_items:
-    #     print(item)
+    print("/output")
+    all_items = os.listdir("/output")
+    # Print each item (file or folder)
+    for item in all_items:
+        print(item)
