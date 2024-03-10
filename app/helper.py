@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 from pprint import pprint
 
-from SimpleITK import SimpleITK as sitk
+import SimpleITK
 from PIL import Image
 import os
 
@@ -62,13 +62,13 @@ def inference_tasks():
 
 def single_file_inference(image_file, callback):
     with tempfile.TemporaryDirectory() as temp_dir:
-        image = sitk.ReadImage(image_file)
+        image = SimpleITK.ReadImage(image_file)
 
         # Define the output file path
         output_path = Path(temp_dir) / "image.jpg"
 
         # Save the 2D slice as a JPG file
-        sitk.WriteImage(image, str(output_path))
+        SimpleITK.WriteImage(image, str(output_path))
 
         # Call back that saves the result
         def save_prediction(
