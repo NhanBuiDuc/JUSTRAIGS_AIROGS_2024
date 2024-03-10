@@ -18,10 +18,10 @@ COPY --chown=user:user helper.py /opt/app
 COPY --chown=user:user inference.py /opt/app
 COPY --chown=user:user gadnet.py /opt/app
 COPY --chown=user:user checkpoints /opt/app/checkpoints
-# Create the output directory and set appropriate permissions
-USER root
-RUN mkdir /opt/app/output && chown user:user /opt/app/output
-USER user
+# # Create the output directory and set appropriate permissions
+# USER root
+# RUN mkdir /opt/app/output && chown user:user /opt/app/output
+# USER user
 
 # WORKDIR ..
 
