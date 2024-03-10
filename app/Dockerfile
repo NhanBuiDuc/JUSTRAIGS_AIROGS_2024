@@ -13,7 +13,8 @@ COPY --chown=user:user requirements.txt /opt/app
 RUN python -m pip install \
     --no-color \
     --requirement requirements.txt
-
+# Install SimpleITK
+RUN python -m pip install SimpleITK
 COPY --chown=user:user helper.py /opt/app
 COPY --chown=user:user inference.py /opt/app
 COPY --chown=user:user gadnet.py /opt/app
