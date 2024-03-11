@@ -248,7 +248,7 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
+                    for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
                         # cropped_img = crop_optical_dics(
                         #     inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
