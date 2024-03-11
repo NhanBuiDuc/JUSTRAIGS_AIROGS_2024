@@ -20,7 +20,34 @@ from airogs_dataset import Airogs
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 import torch.nn.functional as F
 from protonet import ProtoNet
-from prototypical_loss import PrototypicalLoss
+from prototypical_loss import prototypical_loss as loss_fn
+from parser_util import get_parser
+
+
+def init_protonet(opt):
+    '''
+    Initialize the ProtoNet
+    '''
+    device = 'cuda:0' if torch.cuda.is_available() and opt.cuda else 'cpu'
+    model = ProtoNet().to(device)
+    return model
+
+
+def init_optim(opt, model):
+    '''
+    Initialize optimizer
+    '''
+    return torch.optim.Adam(params=model.parameters(),
+                            lr=opt.learning_rate)
+
+
+def init_lr_scheduler(opt, optim):
+    '''
+    Initialize the learning rate scheduler
+    '''
+    return torch.optim.lr_scheduler.StepLR(optimizer=optim,
+                                           gamma=opt.lr_scheduler_gamma,
+                                           step_size=opt.lr_scheduler_step)
 
 
 def main():
@@ -40,6 +67,8 @@ def main():
     model_name = "efficientnet_b0"
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
+
+    options = get_parser().parse_args()
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -98,15 +127,11 @@ def main():
     model = ProtoNet(x_dim=3, hid_dim=64, z_dim=65)
     model = model.to(device)
 
-    criterion = PrototypicalLoss(2)
+    # criterion = PrototypicalLoss(2)
 
-    # if optimizer_name == "sgd":
-    #     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
-
-    # if lr_step_period is None:
-    #     lr_step_period = math.inf
-    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_step_period)
-
+    model = init_protonet(options)
+    optim = init_optim(options, model)
+    lr_scheduler = init_lr_scheduler(options, optim)
     with open(os.path.join(output_dir, "log.csv"), "a") as f:
         f.write("Validation Dataset size: {}".format(len(val_dataset)))
 
@@ -121,14 +146,17 @@ def main():
             for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
                 labels.append(target.detach().cpu().numpy())
                 output = model(polar_image.to(device))
+                batch_loss, acc = loss_fn(output, target=labels,
+                                          n_support=5)
+                batch_loss.backward()
+                optim.step()
                 output = F.softmax(output, dim=0)
                 # _, batch_prediction = torch.max(output, dim=1)
                 # predictions.append(batch_prediction.detach().cpu().numpy())
                 logits.append(output.detach().cpu().numpy())
 
-                batch_loss = criterion(output, target.to(device))
                 epoch_total_loss += batch_loss.item()
-
+            lr_scheduler.step()
             ######
             logits = np.concatenate(
                 logits, axis=0)
