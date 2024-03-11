@@ -80,8 +80,10 @@ def single_file_inference(image_file, callback):
             # Save the 2D slice as a JPG file
             SimpleITK.WriteImage(image, str(output_path))
         except:
-            # Save the 2D slice as a JPG file
-            SimpleITK.WriteImage(image[:, :, 2], str(output_path))
+            # Convert the image data to unsigned char and save the 2D slice
+            image_slice = SimpleITK.Cast(SimpleITK.RescaleIntensity(
+                image[:, :, 2]), SimpleITK.sitkUInt8)
+            SimpleITK.WriteImage(image_slice, str(output_path))
         # Call back that saves the result
 
         def save_prediction(
