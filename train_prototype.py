@@ -22,32 +22,7 @@ import torch.nn.functional as F
 from protonet import ProtoNet
 from prototypical_loss import prototypical_loss as loss_fn
 from parser_util import get_parser
-
-
-def init_protonet(opt):
-    '''
-    Initialize the ProtoNet
-    '''
-    device = 'cuda:0' if torch.cuda.is_available() and opt.cuda else 'cpu'
-    model = ProtoNet(x_dim=3).to(device)
-    return model
-
-
-def init_optim(opt, model):
-    '''
-    Initialize optimizer
-    '''
-    return torch.optim.Adam(params=model.parameters(),
-                            lr=opt.learning_rate)
-
-
-def init_lr_scheduler(opt, optim):
-    '''
-    Initialize the learning rate scheduler
-    '''
-    return torch.optim.lr_scheduler.StepLR(optimizer=optim,
-                                           gamma=opt.lr_scheduler_gamma,
-                                           step_size=opt.lr_scheduler_step)
+from prototypical_batch_sampler import PrototypicalBatchSampler
 
 
 def main():
@@ -91,6 +66,15 @@ def main():
             transforms.ToTensor(),
         ])
 
+    train_dataset = Airogs(
+        path=data_dir,
+        images_dir_name=images_dir_name,
+        split="train",
+        batch_size=batch_size,
+        isModified=True,
+        transforms=transform,
+        polar_transforms=polar_transform
+    )
     val_dataset = Airogs(
         path=data_dir,
         images_dir_name=images_dir_name,
@@ -109,7 +93,7 @@ def main():
     val_loader = DataLoader(val_dataset,
                             batch_size=batch_size,
                             shuffle=True,
-                            num_workers=num_workers,
+                            num_workers=num_workers
                             )
 
     test_loader = DataLoader(test_dataset,
@@ -142,9 +126,8 @@ def main():
             logits = []
             loader = val_loader
             for batch_num, (polar_image, clahe_image, polar_clahe_image, target) in enumerate(tqdm(loader)):
-                labels.append(target.detach().cpu().numpy())
                 output = model(polar_image.to(device))
-                batch_loss, acc = loss_fn(output, target=labels,
+                batch_loss, acc = loss_fn(output, target=target,
                                           n_support=5)
                 batch_loss.backward()
                 optim.step()
