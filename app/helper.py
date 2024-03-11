@@ -76,10 +76,14 @@ def single_file_inference(image_file, callback):
         # Define the output file path
         output_path = Path(temp_dir) / "image.jpg"
 
-        # Save the 2D slice as a JPG file
-        SimpleITK.WriteImage(image, str(output_path))
-
+        try:
+            # Save the 2D slice as a JPG file
+            SimpleITK.WriteImage(image, str(output_path))
+        except:
+            # Save the 2D slice as a JPG file
+            SimpleITK.WriteImage(image[:, :, 2], str(output_path))
         # Call back that saves the result
+
         def save_prediction(
             is_referable_glaucoma,
             likelihood_referable_glaucoma,
