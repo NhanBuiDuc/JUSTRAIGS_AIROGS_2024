@@ -252,7 +252,7 @@ def main():
                         optimizer.zero_grad()
                         # cropped_img = crop_optical_dics(
                         #     inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
-                        output = model(inp.to(device))
+                        output = model(polar_image.to(device))
                         batch_loss, acc = loss_fn(output, target=target,
                                                   n_support=5)
                         target = target.unsqueeze(1)
