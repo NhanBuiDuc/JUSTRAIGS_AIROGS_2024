@@ -29,9 +29,7 @@ import pandas as pd
 import numpy as np
 import torchvision.transforms as transforms
 from PIL import Image
-import timm
 from airogs_dataset import Airogs
-import wandb
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
