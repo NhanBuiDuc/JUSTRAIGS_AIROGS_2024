@@ -29,7 +29,7 @@ def init_protonet(opt):
     Initialize the ProtoNet
     '''
     device = 'cuda:0' if torch.cuda.is_available() and opt.cuda else 'cpu'
-    model = ProtoNet().to(device)
+    model = ProtoNet(x_dim=3).to(device)
     return model
 
 
@@ -124,12 +124,10 @@ def main():
         labels_referable), y=labels_referable).astype('float32')
     print("Class Weights: ", weight_referable)
 
-    model = ProtoNet(x_dim=3, hid_dim=64, z_dim=65)
-    model = model.to(device)
-
     # criterion = PrototypicalLoss(2)
 
     model = init_protonet(options)
+    model = model.to(device)
     optim = init_optim(options, model)
     lr_scheduler = init_lr_scheduler(options, optim)
     with open(os.path.join(output_dir, "log.csv"), "a") as f:
