@@ -1,6 +1,6 @@
 import random
 
-from PIL import Image
+from PIL import Image, ImageFile
 from helper import DEFAULT_GLAUCOMATOUS_FEATURES, inference_tasks
 from gadnet import Gadnet
 import torch
@@ -88,7 +88,8 @@ def load_model(model_name, weight_path, device):
 
 def run():
     _show_torch_cuda_info()
-    PIL.Image.MAX_IMAGE_PIXELS = 6210645355
+    Image.MAX_IMAGE_PIXELS = 72106453550000
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
     print("In Run:")
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
@@ -179,7 +180,8 @@ def run():
             is_referable_glaucoma = False
         else:
             is_referable_glaucoma = True
-        if is_referable_glaucoma:
+
+        if is_referable_glaucoma == True:
             multi_label_output = multi_label_model(
                 multi_label_image.to(device))
             # Binary thresholding for predictions
