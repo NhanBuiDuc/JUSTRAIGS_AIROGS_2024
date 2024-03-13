@@ -15,7 +15,7 @@ import torch
 import torchvision
 import torch.nn as nn
 import torch.optim as optim
-from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
+from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss, BCELoss
 from loss import CCE
 from tqdm import tqdm
 from torchvision.models import resnet18
@@ -45,10 +45,10 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 def main():
     resize = 256
     epochs = 50
-    lr = 0.01
+    lr = 0.0001
     lr_step_period = 10
     momentum = 0.1
-    batch_size = 16
+    batch_size = 4
     num_workers = 16
 
     data_dir = "AIROGS_2024"
@@ -171,7 +171,8 @@ def main():
     model = SobelEnsembler(device)
     model = model.to(device)
 
-    criterion = CCE(device=device, )
+    # criterion = CCE(device=device, )
+    criterion = BCELoss(pos_weight)
     if optimizer_name == "sgd":
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     elif optimizer_name == "adam":
