@@ -240,6 +240,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
         sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
+        sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
         # sobelx = torch.tensor(sobelx, dtype=torch.float32)
         # sobely = torch.tensor(sobelx, dtype=torch.float32)
         sobelx = self.transform(sobelx)
