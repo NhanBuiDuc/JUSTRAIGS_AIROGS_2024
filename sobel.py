@@ -23,11 +23,7 @@ combined_edges = cv2.magnitude(sobelx, sobely)
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
-# # Display Sobely
-# cv2.imshow('Sobely', sobely)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
-# Display the combination
-cv2.imshow('Combined Edges (Sobelx and Sobely)', combined_edges)
+# Display Sobely
+cv2.imshow('Sobely', sobely)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
