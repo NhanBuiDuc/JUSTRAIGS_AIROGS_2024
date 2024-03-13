@@ -164,82 +164,24 @@ class Airogs2(torchvision.datasets.VisionDataset):
     def __getitem__(self, index):
         file_name = self.df_files.loc[index, 'Eye ID']
         original_image = None
-        try:
-            # Attempt to open the image with .jpg extension
-            image_path = os.path.join(
-                self.path, self.images_dir_name, file_name + ".jpg")
-            # Replacing backslashes with forward slashes
-            image_path = image_path.replace("\\", "/")
-            # original_image = Image.open(image_path)
-            original_image = cv2.imread(image_path)
-            label = self.df_files.loc[index, 'Final Label']
-            label = 0 if label == 'NRG' else 1
-            label = torch.tensor(label, dtype=torch.long)
-            # original_image = np.array(original_image, dtype=np.float64)
-            sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
-            sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
-            sobelx = torch.tensor(sobelx, dtype=torch.float32)
-            sobely = torch.tensor(sobelx, dtype=torch.float32)
-            sobelx = self.transforms(sobelx)
-            sobely = self.transforms(sobelx)
-            return sobelx, sobely, label
-            # original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
-        except FileNotFoundError:
-            try:
-                # If the file with .jpg extension is not found, try to open the image with .png extension
-                image_path = os.path.join(
-                    self.path, self.images_dir_name, file_name + ".png")
-                # Replacing backslashes with forward slashes
-                image_path = image_path.replace("\\", "/")
+        # Attempt to open the image with .jpg extension
+        image_path = os.path.join(
+            self.path, self.images_dir_name, file_name + ".jpg")
+        # Replacing backslashes with forward slashes
+        image_path = image_path.replace("\\", "/")
+        # original_image = Image.open(image_path)
+        original_image = cv2.imread(image_path)
+        label = self.df_files.loc[index, 'Final Label']
+        label = 0 if label == 'NRG' else 1
+        label = torch.tensor(label, dtype=torch.long)
+        # original_image = np.array(original_image, dtype=np.float64)
+        sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
+        sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
+        # sobelx = torch.tensor(sobelx, dtype=torch.float32)
+        # sobely = torch.tensor(sobelx, dtype=torch.float32)
+        sobelx = self.transforms(sobelx)
+        sobely = self.transforms(sobelx)
+        return sobelx, sobely, label
 
-                # Check if the file exists
-                if os.path.exists(image_path):
-                    original_image = cv2.imread(image_path)
-                else:
-                    image_path = os.path.join(
-                        self.path, self.images_dir_name, file_name + ".jpg")
-                    image_path = image_path.replace("\\", "/")
-                    if os.path.exists(image_path):
-                        original_image = cv2.imread(image_path)
-
-                    else:
-                        image_path = os.path.join(
-                            self.path, self.images_dir_name, file_name + ".jpeg")
-                        # Replacing backslashes with forward slashes
-                        image_path = image_path.replace("\\", "/")
-                        if os.path.exists(image_path):
-                            original_image = cv2.imread(image_path)
-                        else:
-                            image_path = os.path.join(
-                                self.path, self.images_dir_name, file_name + ".PNG")
-                            image_path = image_path.replace("\\", "/")
-                            if os.path.exists(image_path):
-                                original_image = cv2.imread(image_path)
-                            else:
-                                image_path = os.path.join(
-                                    self.path, self.images_dir_name, file_name + ".JPG")
-                                # Replacing backslashes with forward slashes
-                                image_path = image_path.replace("\\", "/")
-                                if os.path.exists(image_path):
-                                    original_image = cv2.imread(image_path)
-                                else:
-                                    image_path = os.path.join(
-                                        self.path, self.images_dir_name, file_name + ".PNG")
-                                    image_path = image_path.replace("\\", "/")
-                                    if os.path.exists(image_path):
-                                        original_image = cv2.imread(image_path)
-                # original_image = Image.open(image_path).convert(
-                #     'RGB')  # Adjust as needed
-
-                # original_image = cv2.cvtColor(
-                #     original_image, cv2.COLOR_BGR2RGB)
-                sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
-                sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
-                # sobelx = torch.tensor(sobelx, dtype=torch.float32)
-                # sobely = torch.tensor(sobelx, dtype=torch.float32)
-                sobelx = self.transforms(sobelx)
-                sobely = self.transforms(sobelx)
-                return sobelx, sobely, label
-        
     def __len__(self):
         return len(self.df_files)
