@@ -222,7 +222,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
         sobelx = Image.fromarray(sobelx.astype("uint8"))
         sobely = Image.fromarray(sobely.astype("uint8"))
         sobelx = self.transforms(sobelx)
-        sobely = self.transforms(sobelx)
+        sobely = self.transforms(sobely)
         return sobelx, sobely, label
 
     def __len__(self):
