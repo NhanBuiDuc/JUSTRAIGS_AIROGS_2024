@@ -218,8 +218,8 @@ class Airogs2(torchvision.datasets.VisionDataset):
         label = torch.tensor(label, dtype=torch.long)
         sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
         sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
-        # sobelx = torch.tensor(sobelx, dtype=torch.float32)
-        # sobely = torch.tensor(sobelx, dtype=torch.float32)
+        sobelx = Image.fromarray(sobelx.astype("uint8"))
+        sobely = Image.fromarray(sobely.astype("uint8"))
         sobelx = self.transforms(sobelx)
         sobely = self.transforms(sobelx)
         return sobelx, sobely, label
