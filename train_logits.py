@@ -3,7 +3,7 @@ from torchvision.transforms import ToPILImage
 from torchvision.utils import draw_bounding_boxes
 from torchvision.ops import masks_to_boxes
 from skimage.transform import warp_polar
-from skimage.exposure import equalize_adapthist
+from sobel_ensembler_net import SobelEnsembler
 import cv2
 from skimage.transform import resize
 from keras.models import Model
@@ -166,8 +166,9 @@ def main():
         model.fc = nn.Linear(
             in_features=model.fc.in_features, out_features=1, bias=True)
     # model = timm.create_model('efficientnet_b0', num_classes=1)
-    model = EfficientNet.from_name(
-        'efficientnet-b0', in_channels=3, num_classes=1)
+    # model = EfficientNet.from_name(
+    #     'efficientnet-b0', in_channels=3, num_classes=1)
+    model = SobelEnsembler(device)
     model = model.to(device)
 
     criterion = CCE(device=device, )
@@ -213,11 +214,11 @@ def main():
                     labels = []
                     logits = []
                     loader = train_loader if split == "Train" else val_loader
-                    for batch_num, (inp, target) in enumerate(tqdm(loader)):
+                    for batch_num, (sobelx, sobely, target) in enumerate(tqdm(loader)):
                         optimizer.zero_grad()
                         # cropped_img = crop_optical_dics(
                         #     inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
-                        output = model(inp.to(device))
+                        output = model(sobelx.to(device), sobely.to(device))
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
                         target = target.float().to(device)
