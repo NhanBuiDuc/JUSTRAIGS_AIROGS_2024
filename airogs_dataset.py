@@ -239,7 +239,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
-        original_image = cv2.Sobel(original_image)
+        original_image = cv2.Sobel(original_image, ddepth=2)
         return original_image, label
 
     def __len__(self):
