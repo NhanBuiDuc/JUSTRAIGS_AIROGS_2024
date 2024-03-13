@@ -170,8 +170,8 @@ class Airogs2(torchvision.datasets.VisionDataset):
                 self.path, self.images_dir_name, file_name + ".jpg")
             # Replacing backslashes with forward slashes
             image_path = image_path.replace("\\", "/")
-            # original_image = Image.open(image_path)
-            original_image = cv2.imread(image_path)
+            original_image = Image.open(image_path)
+            # original_image = cv2.imread(image_path)
             # original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
         except FileNotFoundError:
             try:
@@ -182,7 +182,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
                 image_path = image_path.replace("\\", "/")
                 original_image = Image.open(image_path).convert(
                     'RGB')  # Adjust as needed
-                original_image = cv2.imread(image_path)
+                # original_image = cv2.imread(image_path)
                 # original_image = cv2.cvtColor(
                 #     original_image, cv2.COLOR_BGR2RGB)
             except FileNotFoundError:
@@ -193,7 +193,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
                     # Replacing backslashes with forward slashes
                     image_path = image_path.replace("\\", "/")
                     original_image = Image.open(image_path)
-                    original_image = cv2.imread(image_path)
+                    # original_image = cv2.imread(image_path)
                     # original_image = cv2.cvtColor(
                     #     original_image, cv2.COLOR_BGR2RGB)
                 except FileNotFoundError:
@@ -203,8 +203,8 @@ class Airogs2(torchvision.datasets.VisionDataset):
                             self.path, self.images_dir_name, file_name + ".JPG")
                         # Replacing backslashes with forward slashes
                         image_path = image_path.replace("\\", "/")
-                        # original_image = Image.open(image_path)
-                        original_image = cv2.imread(image_path)
+                        original_image = Image.open(image_path)
+                        # original_image = cv2.imread(image_path)
                         # original_image = cv2.cvtColor(
                         #     original_image, cv2.COLOR_BGR2RGB)
                     except FileNotFoundError:
@@ -214,8 +214,8 @@ class Airogs2(torchvision.datasets.VisionDataset):
                                 self.path, self.images_dir_name, file_name + ".JPEG")
                             # Replacing backslashes with forward slashes
                             image_path = image_path.replace("\\", "/")
-                            # original_image = Image.open(image_path)
-                            original_image = cv2.imread(image_path)
+                            original_image = Image.open(image_path)
+                            # original_image = cv2.imread(image_path)
                             # original_image = cv2.cvtColor(
                             #     original_image, cv2.COLOR_BGR2RGB)
                         except FileNotFoundError:
@@ -225,9 +225,9 @@ class Airogs2(torchvision.datasets.VisionDataset):
                                     self.path, self.images_dir_name, file_name + ".PNG")
                                 # Replacing backslashes with forward slashes
                                 image_path = image_path.replace("\\", "/")
-                                # original_image = Image.open(image_path).convert(
-                                #     'RGB')  # Adjust as needed
-                                original_image = cv2.imread(image_path)
+                                original_image = Image.open(image_path).convert(
+                                    'RGB')  # Adjust as needed
+                                # original_image = cv2.imread(image_path)
                                 # original_image = cv2.cvtColor(
                                 #     original_image, cv2.COLOR_BGR2RGB)
                             except FileNotFoundError:
@@ -239,6 +239,7 @@ class Airogs2(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
+        original_image = np.array(original_image, dtype=np.float64)
         sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
         sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
         # sobelx = torch.tensor(sobelx, dtype=torch.float32)
