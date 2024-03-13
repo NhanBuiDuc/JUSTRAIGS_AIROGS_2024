@@ -244,8 +244,8 @@ class Airogs2(torchvision.datasets.VisionDataset):
         sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
         # sobelx = torch.tensor(sobelx, dtype=torch.float32)
         # sobely = torch.tensor(sobelx, dtype=torch.float32)
-        sobelx = self.transform(sobelx)
-        sobely = self.transform(sobelx)
+        sobelx = self.transforms(sobelx)
+        sobely = self.transforms(sobelx)
         return sobelx, sobely, label
 
     def __len__(self):
