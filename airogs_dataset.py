@@ -216,13 +216,13 @@ class Airogs2(torchvision.datasets.VisionDataset):
         label = self.df_files.loc[index, 'Final Label']
         label = 0 if label == 'NRG' else 1
         label = torch.tensor(label, dtype=torch.long)
-        original_image = self.transforms(original_image)
+
         sobelx = cv2.Sobel(original_image, cv2.CV_64F, 1, 0, ksize=5)
         sobely = cv2.Sobel(original_image, cv2.CV_64F, 0, 1, ksize=5)
-        # sobelx = Image.fromarray(sobelx.astype("uint8"))
-        # sobely = Image.fromarray(sobely.astype("uint8"))
-        # sobelx = self.transforms(sobelx)
-        # sobely = self.transforms(sobelx)
+        sobelx = Image.fromarray(sobelx.astype("uint8"))
+        sobely = Image.fromarray(sobely.astype("uint8"))
+        sobelx = self.transforms(sobelx)
+        sobely = self.transforms(sobelx)
         return sobelx, sobely, label
 
     def __len__(self):
