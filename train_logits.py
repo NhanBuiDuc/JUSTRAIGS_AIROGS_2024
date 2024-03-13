@@ -86,7 +86,7 @@ def main():
         images_dir_name=images_dir_name,
         split="train",
         batch_size=batch_size,
-        isModified=True,
+        isModified=False,
         transforms=transform,
         polar_transforms=polar_transform
     )
@@ -94,7 +94,7 @@ def main():
         path=data_dir,
         images_dir_name=images_dir_name,
         split="val",
-        isModified=False,
+        isModified=True,
         batch_size=batch_size,
         transforms=transform
     )
@@ -103,7 +103,7 @@ def main():
         path=data_dir,
         images_dir_name=images_dir_name,
         split="test",
-        isModified=False,
+        isModified=True,
         # transforms=test_transform
         transforms=transform
     )
