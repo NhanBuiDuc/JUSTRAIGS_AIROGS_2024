@@ -30,7 +30,7 @@ import pandas as pd
 import numpy as np
 import torchvision.transforms as transforms
 from PIL import Image
-from airogs_dataset import Airogs
+from airogs_dataset import Airogs2
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
@@ -81,7 +81,7 @@ def main():
             transforms.ToTensor(),
         ])
 
-    train_dataset = Airogs(
+    train_dataset = Airogs2(
         path=data_dir,
         images_dir_name=images_dir_name,
         split="train",
@@ -90,7 +90,7 @@ def main():
         transforms=transform,
         polar_transforms=polar_transform
     )
-    val_dataset = Airogs(
+    val_dataset = Airogs2(
         path=data_dir,
         images_dir_name=images_dir_name,
         split="val",
@@ -99,7 +99,7 @@ def main():
         transforms=transform
     )
 
-    test_dataset = Airogs(
+    test_dataset = Airogs2(
         path=data_dir,
         images_dir_name=images_dir_name,
         split="test",

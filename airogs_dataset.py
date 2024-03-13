@@ -142,3 +142,105 @@ class Airogs(torchvision.datasets.VisionDataset):
 
     def __len__(self):
         return len(self.df_files)
+
+
+class Airogs2(torchvision.datasets.VisionDataset):
+
+    def __init__(self, split='train', batch_size=64, path='', images_dir_name='train', isModified=False, transforms=None, polar_transforms=False, apply_clahe=False):
+        self.split = split
+        self.path = path
+        self.images_dir_name = images_dir_name
+        # columns = ['challenge_id', 'class', 'referable', 'gradable']
+        self.df_files = pd.read_csv(
+            os.path.join(self.path, self.split + ".csv"))
+        if isModified:
+            self.df_files = modify_dataframe(
+                self.df_files, ratio=0.01)
+        self.transforms = transforms
+        self.polar_transforms = polar_transforms
+        self.apply_clahe = apply_clahe
+        print("{} size: {}".format(split, len(self.df_files)))
+
+    def __getitem__(self, index):
+        file_name = self.df_files.loc[index, 'Eye ID']
+        original_image = None
+        try:
+            # Attempt to open the image with .jpg extension
+            image_path = os.path.join(
+                self.path, self.images_dir_name, file_name + ".jpg")
+            # Replacing backslashes with forward slashes
+            image_path = image_path.replace("\\", "/")
+            original_image = Image.open(image_path)
+            # original_image = cv2.imread(image_path)
+            # original_image = cv2.cvtColor(original_image, cv2.COLOR_BGR2RGB)
+        except FileNotFoundError:
+            try:
+                # If the file with .jpg extension is not found, try to open the image with .png extension
+                image_path = os.path.join(
+                    self.path, self.images_dir_name, file_name + ".png")
+                # Replacing backslashes with forward slashes
+                image_path = image_path.replace("\\", "/")
+                original_image = Image.open(image_path).convert(
+                    'RGB')  # Adjust as needed
+                # original_image = cv2.imread(image_path)
+                # original_image = cv2.cvtColor(
+                #     original_image, cv2.COLOR_BGR2RGB)
+            except FileNotFoundError:
+                try:
+                    # If the file with .jpg extension is not found, try to open the image with .png extension
+                    image_path = os.path.join(
+                        self.path, self.images_dir_name, file_name + ".jpeg")
+                    # Replacing backslashes with forward slashes
+                    image_path = image_path.replace("\\", "/")
+                    original_image = Image.open(image_path)
+                    # original_image = cv2.imread(image_path)
+                    # original_image = cv2.cvtColor(
+                    #     original_image, cv2.COLOR_BGR2RGB)
+                except FileNotFoundError:
+                    try:
+                        # If the file with .jpg extension is not found, try to open the image with .png extension
+                        image_path = os.path.join(
+                            self.path, self.images_dir_name, file_name + ".JPG")
+                        # Replacing backslashes with forward slashes
+                        image_path = image_path.replace("\\", "/")
+                        original_image = Image.open(image_path)
+                        # original_image = cv2.imread(image_path)
+                        # original_image = cv2.cvtColor(
+                        #     original_image, cv2.COLOR_BGR2RGB)
+                    except FileNotFoundError:
+                        try:
+                            # If the file with .jpg extension is not found, try to open the image with .png extension
+                            image_path = os.path.join(
+                                self.path, self.images_dir_name, file_name + ".JPEG")
+                            # Replacing backslashes with forward slashes
+                            image_path = image_path.replace("\\", "/")
+                            original_image = Image.open(image_path)
+                            # original_image = cv2.imread(image_path)
+                            # original_image = cv2.cvtColor(
+                            #     original_image, cv2.COLOR_BGR2RGB)
+                        except FileNotFoundError:
+                            try:
+                                # If the file with .jpg extension is not found, try to open the image with .png extension
+                                image_path = os.path.join(
+                                    self.path, self.images_dir_name, file_name + ".PNG")
+                                # Replacing backslashes with forward slashes
+                                image_path = image_path.replace("\\", "/")
+                                original_image = Image.open(image_path).convert(
+                                    'RGB')  # Adjust as needed
+                                # original_image = cv2.imread(image_path)
+                                # original_image = cv2.cvtColor(
+                                #     original_image, cv2.COLOR_BGR2RGB)
+                            except FileNotFoundError:
+                                # Handle the case where both .jpg and .png files are not found
+                                print(
+                                    f"Error: File not found for index {index}")
+                                # You might want to return a placeholder image or raise an exception as needed
+
+        label = self.df_files.loc[index, 'Final Label']
+        label = 0 if label == 'NRG' else 1
+        label = torch.tensor(label, dtype=torch.long)
+        original_image = cv2.Sobel(original_image)
+        return original_image, label
+
+    def __len__(self):
+        return len(self.df_files)
