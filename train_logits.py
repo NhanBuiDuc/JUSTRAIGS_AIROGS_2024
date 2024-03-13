@@ -219,6 +219,7 @@ def main():
                         # cropped_img = crop_optical_dics(
                         #     inp, crop_model1=model1_256, crop_model2=model2_256, crop_model3=model3_128, crop_model4=model4_128)
                         output = model(sobelx.to(device), sobely.to(device))
+                        output = F.sigmoid(output)
                         # output = output.squeeze(1)
                         target = target.unsqueeze(1)
                         target = target.float().to(device)

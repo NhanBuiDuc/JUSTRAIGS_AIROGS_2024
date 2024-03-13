@@ -353,17 +353,17 @@ class EfficientNet(nn.Module):
             x = x.flatten(start_dim=1)
             x = self._dropout(x)
             x = self._fc(x)
-            x = self.fc1(x)
-            x = self.identity(x)
-            x = self.fc2(x)
-            x = self.identity(x)
-            x = self.fc3(x)
-            x = self.identity(x)
-            x = self.fc4(x)
-            x = self.identity(x)
-            x = self.fc5(x)
-            ##
-            x = self.sigmoid(x)
+            # x = self.fc1(x)
+            # x = self.identity(x)
+            # x = self.fc2(x)
+            # x = self.identity(x)
+            # x = self.fc3(x)
+            # x = self.identity(x)
+            # x = self.fc4(x)
+            # x = self.identity(x)
+            # x = self.fc5(x)
+            # ##
+            # x = self.sigmoid(x)
         return x
 
     @classmethod
