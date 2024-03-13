@@ -16,6 +16,7 @@ import torchvision
 import torch.nn as nn
 import torch.optim as optim
 from torch.nn import CrossEntropyLoss, BCEWithLogitsLoss
+from loss import CCE
 from tqdm import tqdm
 from torchvision.models import resnet18
 from torch.utils.data import DataLoader
@@ -29,9 +30,7 @@ import pandas as pd
 import numpy as np
 import torchvision.transforms as transforms
 from PIL import Image
-import timm
 from airogs_dataset import Airogs
-import wandb
 from sklearn.metrics import roc_curve, roc_auc_score, auc
 from csv_logger import CsvLogger
 import logging
@@ -61,32 +60,12 @@ def main():
     optimizer_name = "sgd"
     name = f"exp1_{model_name}_{resize}R"
 
-    # wandb.init(name=name, project="airogs_final", entity="airogs")
-
     os.makedirs(output_dir, exist_ok=True)
 
     if torch.cuda.is_available():
         device = torch.device("cuda:0")
     else:
         device = torch.device("cpu")
-
-    # wandb.config.update({
-    #     "epochs": epochs,
-    #     "lr": lr,
-    #     "lr_step_period": lr_step_period,
-    #     "momentun": momentum,
-    #     "batch_size": batch_size,
-    #     "num_workers": num_workers,
-    #     "data_dir": data_dir,
-    #     "images_dir_name": images_dir_name,
-    #     "output_dir": output_dir,
-    #     "run_test": run_test,
-    #     "pretrained": pretrained,
-    #     "model": model_name,
-    #     "optimizer": optimizer_name,
-    #     "device": device.type,
-    #     "resize": resize
-    # })
 
     desired_specificity = 0.95
     transform = None
@@ -182,12 +161,6 @@ def main():
                           max_files=max_files,
                           header=header)
 
-    # wandb.config.update({
-    #     "train_count": len(train_dataset),
-    #     "val_count": len(val_dataset),
-    #     "class_weights": ", ".join(map(lambda x: str(x), weight_referable))
-    # })
-
     if model_name == "resnet18":
         model = resnet18(pretrained=pretrained)
         model.fc = nn.Linear(
@@ -197,12 +170,7 @@ def main():
         'efficientnet-b0', in_channels=3, num_classes=1)
     model = model.to(device)
 
-    # wandb.watch(model)
-
-    # criterion = CrossEntropyLoss(
-    #     weight=torch.from_numpy(weight_referable).to(device))
-    # criterion = BCEWithLogitsLoss(pos_weight=pos_weight)
-    criterion = BCEWithLogitsLoss()
+    criterion = CCE(device=device, )
     if optimizer_name == "sgd":
         optimizer = optim.SGD(model.parameters(), lr=lr, momentum=momentum)
     elif optimizer_name == "adam":
