@@ -18,15 +18,15 @@ sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=5)
 
 # Combine Sobelx and Sobely
 combined_edges = cv2.magnitude(sobelx, sobely)
-# Display Sobelx
-cv2.imshow('Sobelx', sobelx)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# # Display Sobelx
+# cv2.imshow('Sobelx', sobelx)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
-# Display Sobely
-cv2.imshow('Sobely', sobely)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+# # Display Sobely
+# cv2.imshow('Sobely', sobely)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 # Display the combination
 cv2.imshow('Combined Edges (Sobelx and Sobely)', combined_edges)
 cv2.waitKey(0)
