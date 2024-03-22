@@ -108,6 +108,7 @@ def run():
     print("Load binary model")
     binary_model = Gadnet(device)
     binary_model = binary_model.to(device)
+    binary_model.eval()
     model_name = "swin_tiny_patch4_window7_224"
     print("Load ", model_name, " model")
     multi_label_model = swin_tiny_patch4_window7_224(
@@ -131,79 +132,80 @@ def run():
         print(item)
     # Load the model with pretrained weights
     # multi_label_model = load_model(model_name, weight_path, device)
-    for jpg_image_file_name, save_prediction in inference_tasks():
-        # Do inference, possibly something better performant
+    with torch.no_grad():
+        for jpg_image_file_name, save_prediction in inference_tasks():
+            # Do inference, possibly something better performant
 
-        print(f"Running inference on {jpg_image_file_name}")
+            print(f"Running inference on {jpg_image_file_name}")
 
-        # For example: use Pillow to read the jpg file and convert it to a NumPY array:
-        original_image = Image.open(jpg_image_file_name).convert(
-            'RGB')  # Adjust as needed
-        multi_label_image = transform2(original_image)
-        multi_label_image = torch.unsqueeze(multi_label_image, axis=0)
-        original_image = np.array(original_image, dtype=np.float64)
-        polar_image = polar(original_image)
+            # For example: use Pillow to read the jpg file and convert it to a NumPY array:
+            original_image = Image.open(jpg_image_file_name).convert(
+                'RGB')  # Adjust as needed
+            multi_label_image = transform2(original_image)
+            multi_label_image = torch.unsqueeze(multi_label_image, axis=0)
+            original_image = np.array(original_image, dtype=np.float64)
+            polar_image = polar(original_image)
 
-        clahe_image = original_image / 255.0
-        clahe_image = equalize_adapthist(clahe_image)
-        clahe_image = (clahe_image*255).astype('uint8')
-        clahe_image = Image.fromarray(clahe_image)
+            clahe_image = original_image / 255.0
+            clahe_image = equalize_adapthist(clahe_image)
+            clahe_image = (clahe_image*255).astype('uint8')
+            clahe_image = Image.fromarray(clahe_image)
 
-        polar_clahe_image = polar_image / 255.0
-        polar_clahe_image = equalize_adapthist(polar_clahe_image)
-        polar_clahe_image = (polar_clahe_image*255).astype('uint8')
-        polar_clahe_image = Image.fromarray(polar_clahe_image)
+            polar_clahe_image = polar_image / 255.0
+            polar_clahe_image = equalize_adapthist(polar_clahe_image)
+            polar_clahe_image = (polar_clahe_image*255).astype('uint8')
+            polar_clahe_image = Image.fromarray(polar_clahe_image)
 
-        assert (transforms != None)
-        polar_image = Image.fromarray(polar_image.astype("uint8"))
-        polar_image = transform(polar_image)
-        clahe_image = transform(clahe_image)
-        polar_clahe_image = transform(polar_clahe_image)
+            assert (transforms != None)
+            polar_image = Image.fromarray(polar_image.astype("uint8"))
+            polar_image = transform(polar_image)
+            clahe_image = transform(clahe_image)
+            polar_clahe_image = transform(polar_clahe_image)
 
-        polar_image = torch.unsqueeze(polar_image, axis=0)
-        clahe_image = torch.unsqueeze(clahe_image, axis=0)
-        polar_clahe_image = torch.unsqueeze(polar_clahe_image, axis=0)
-        output = binary_model(polar_image.to(device), clahe_image.to(device),
-                              polar_clahe_image.to(device))
-        output = F.softmax(output, dim=1)
-        print("output:", output)
-        is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
-            output, dim=1)
-        is_referable_glaucoma_likelihood = float(
-            is_referable_glaucoma_likelihood.detach().cpu().numpy()[0])
-        is_referable_glaucoma = float(
-            is_referable_glaucoma.detach().cpu().numpy()[0])
-        print("is_referable_glaucoma_likelihood: ",
-              is_referable_glaucoma_likelihood)
-        print("is_referable_glaucoma: ", is_referable_glaucoma)
-        if is_referable_glaucoma == 0.0:
-            is_referable_glaucoma = False
-        else:
+            polar_image = torch.unsqueeze(polar_image, axis=0)
+            clahe_image = torch.unsqueeze(clahe_image, axis=0)
+            polar_clahe_image = torch.unsqueeze(polar_clahe_image, axis=0)
+            output = binary_model(polar_image.to(device), clahe_image.to(device),
+                                  polar_clahe_image.to(device))
+            output = F.softmax(output, dim=1)
+            print("output:", output)
+            is_referable_glaucoma_likelihood, is_referable_glaucoma = torch.max(
+                output, dim=1)
+            is_referable_glaucoma_likelihood = float(
+                is_referable_glaucoma_likelihood.detach().cpu().numpy()[0])
+            is_referable_glaucoma = float(
+                is_referable_glaucoma.detach().cpu().numpy()[0])
+            print("is_referable_glaucoma_likelihood: ",
+                  is_referable_glaucoma_likelihood)
+            print("is_referable_glaucoma: ", is_referable_glaucoma)
+            if is_referable_glaucoma == 0.0:
+                is_referable_glaucoma = False
+            else:
+                is_referable_glaucoma = True
             is_referable_glaucoma = True
+            if is_referable_glaucoma == True:
+                multi_label_output = multi_label_model(
+                    multi_label_image.to(device))
+                # Binary thresholding for predictions
+                pred_labels = (torch.sigmoid(multi_label_output) > 0.5).float()
+                features = {
+                    # Convert tensor values to True/False
+                    k: pred_labels[0, i].item() == 1
+                    for i, (k, v) in enumerate(DEFAULT_GLAUCOMATOUS_FEATURES.items())
+                }
 
-        if is_referable_glaucoma == True:
-            multi_label_output = multi_label_model(
-                multi_label_image.to(device))
-            # Binary thresholding for predictions
-            pred_labels = (torch.sigmoid(multi_label_output) > 0.5).float()
-            features = {
-                # Convert tensor values to True/False
-                k: pred_labels[0, i].item() == 1
-                for i, (k, v) in enumerate(DEFAULT_GLAUCOMATOUS_FEATURES.items())
-            }
+            else:
+                features = {
+                    k: None
+                    for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
+                }
 
-        else:
-            features = {
-                k: None
-                for k, v in DEFAULT_GLAUCOMATOUS_FEATURES.items()
-            }
-
-        # Finally, save the answer
-        save_prediction(
-            is_referable_glaucoma,
-            is_referable_glaucoma_likelihood,
-            features,
-        )
+            # Finally, save the answer
+            save_prediction(
+                is_referable_glaucoma,
+                is_referable_glaucoma_likelihood,
+                features,
+            )
     return 0
 
 
